@@ -1,0 +1,25 @@
+{
+  "name": "akamai-open",
+  "version": "0.0.0",
+  "description": "Authorisation process and API helper for Akamai OPEN APIs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:jldb/akamai-open.git"
+  },
+  "keywords": [
+    "akamai",
+    "open",
+    "api"
+  ],
+  "author": "Jonathan Bennett",
+  "license": "MIT",
+  "dependencies": {
+    "moment": "^2.7.0",
+    "node-uuid": "^1.4.1",
+    "underscore": "^1.6.0"
+  }
+}
