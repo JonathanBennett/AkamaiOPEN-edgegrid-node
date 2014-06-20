@@ -33,8 +33,6 @@ var EdgeGrid = function(client_token, client_secret, access_token) {
 }
 
 EdgeGrid.prototype.auth = function(request, callback) {
-
-	console.log(arguments.callee.caller.toString());
 	_request = auth.generate_auth(request, _client_token, _client_secret, _access_token);
 	return this;
 }
