@@ -59,7 +59,7 @@ EdgeGrid.prototype.send = function(callback) {
 
 	  res.on('end', function () {
 	  	if(callback && typeof callback == "function") { 
-	  		callback(data);
+	  		callback(data, res);
 	  	}
 	    
 	  });
