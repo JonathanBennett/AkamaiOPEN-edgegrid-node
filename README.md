@@ -52,15 +52,7 @@ Basic use of the library looks like the following. This will prepare the auth he
 Calls using the edgegrid client can also be chained as per the following;
 
 ```javascript
-	var EdgeGrid = require('edgegrid');
-
-	var client_token = "akab-access-token-xxx-xxxxxxxxxxxxxxxx",
-	  client_secret = "akab-client-token-xxx-xxxxxxxxxxxxxxxx",
-	  access_token = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=";
-
-	var data = "datadatadatadatadatadatadatadata";
-
-	var eg = new EdgeGrid(client_token, client_secret, access_token);
+	...
 
 	eg.auth({
 	  "url": "https://akaa-baseurl-xxxxxxxxxxx-xxxxxxxxxxxxx.luna.akamaiapis.net/billing-usage/v1/products",
