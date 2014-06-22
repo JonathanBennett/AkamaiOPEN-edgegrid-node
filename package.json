@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.org:jldb/akamai-open.git"
+    "url": "git@github.com:JonathanBennett/AkamaiOPEN-edgegrid-node.git"
   },
   "keywords": [
     "akamai",
