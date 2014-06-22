@@ -14,6 +14,7 @@ var base_url = "https://akaa-baseurl-xxxxxxxxxxx-xxxxxxxxxxxxx.luna.akamaiapis.n
     nonce = "nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
     timestamp = "20140321T19:34:21+0000";
 
+var test_auth = null;
 
 describe('Signature Generation', function() {
 	describe('simple GET', function() {
