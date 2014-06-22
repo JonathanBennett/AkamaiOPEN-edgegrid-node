@@ -1,6 +1,6 @@
 {
-  "name": "akamai-open",
-  "version": "0.0.1",
+  "name": "edgegrid",
+  "version": "1.0.0",
   "description": "Authorisation process and API helper for Akamai OPEN APIs",
   "main": "index.js",
   "scripts": {
