@@ -2,7 +2,6 @@
 
 var https = require('https'),
 url = require('url');
-
 // EdgeGrid Auth Module
 var auth = require('./auth.js');
 
@@ -34,6 +33,11 @@ var EdgeGrid = function(client_token, client_secret, access_token) {
 
 EdgeGrid.prototype.auth = function(request, callback) {
 	_request = auth.generate_auth(request, _client_token, _client_secret, _access_token);
+	
+	if(callback != undefined) { 
+		callback(this);
+	}
+
 	return this;
 }
 
