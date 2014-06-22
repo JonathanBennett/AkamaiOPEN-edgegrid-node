@@ -6,7 +6,7 @@ This library implements an Authentication handler for requests that provides the
 
 ## Installation
 
-`npm install --save akamai-open`
+`npm install --save edgegrid`
 
 ## Reporting a bug
 
