@@ -60,6 +60,18 @@ var make_content_hash = function(request) {
 
         var content_hash = "",
         prepared_body = request.body || "";
+
+        if(typeof prepared_body == "object") {
+        	console.info("body content is type object, transforming to post data");
+        	var post_data_new = "";
+			_.each(prepared_body, function(value, index) {
+				// console.log(encodeURIComponent(JSON.stringify(value)));
+				post_data_new += index + "=" + encodeURIComponent(JSON.stringify(value)) + "&";
+			});
+			prepared_body = post_data_new;
+			request.body = prepared_body;
+        }
+
         console.info("body is \"" + prepared_body + "\"");
         console.debug("PREPARED BODY LENGTH", prepared_body.length)
 
