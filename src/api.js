@@ -8,9 +8,10 @@ var auth = require('./auth.js');
 var _client_token = null,
   _client_secret = null,
   _access_token = null,
+  _base_uri = null,
   _request = null;
 
-var EdgeGrid = function(client_token, client_secret, access_token) {
+var EdgeGrid = function(client_token, client_secret, access_token, base_uri) {
 
   if (client_token === undefined || client_token === null) {
     console.log("No client token");
@@ -21,18 +22,22 @@ var EdgeGrid = function(client_token, client_secret, access_token) {
   } else if (access_token === undefined || access_token === null) {
     console.log("No access token");
     return false;
+  } else if (base_uri === undefined || base_uri === null) {
+    console.log("No base uri");
+    return false;
   }
 
   _client_token = client_token;
   _client_secret = client_secret;
   _access_token = access_token;
+  _base_uri = base_uri;
 
   return this;
 
 };
 
 EdgeGrid.prototype.auth = function(request, callback) {
-  _request = auth.generate_auth(request, _client_token, _client_secret, _access_token);
+  _request = auth.generate_auth(request, _client_token, _client_secret, _access_token, _base_uri);
 
   if (callback && typeof callback == "function") {
     callback(this);
