@@ -19,10 +19,10 @@ describe('Signature Generation', function() {
       var expected_header = "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=tL+y4hxyHxgWVD30X3pWnGKHcPzmrIF+LThiAOhMxYU=";
       var request = {
         //"url": "https://akaa-kax6r2oleojomqr3-q2i5ed3v35xfwe3j.luna.akamaiapis.net/billing-usage/v1/contractusagedata/contract/C-6JGLXF/6/2014",
-        "url": base_url,
+        "path": "",
         "method": "GET"
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, false, false, nonce, timestamp);
+      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, false, false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -31,10 +31,10 @@ describe('Signature Generation', function() {
       var expected_header = "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=hKDH1UlnQySSHjvIcZpDMbQHihTQ0XyVAKZaApabdeA=";
       var request = {
         //"url": "https://akaa-kax6r2oleojomqr3-q2i5ed3v35xfwe3j.luna.akamaiapis.net/billing-usage/v1/contractusagedata/contract/C-6JGLXF/6/2014",
-        "url": base_url + "testapi/v1/t1?p1=1&p2=2",
+        "path": "testapi/v1/t1?p1=1&p2=2",
         "method": "GET"
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, false, false, nonce, timestamp);
+      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, false, false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -44,11 +44,11 @@ describe('Signature Generation', function() {
       var data = "datadatadatadatadatadatadatadata";
       var request = {
         //"url": "https://akaa-kax6r2oleojomqr3-q2i5ed3v35xfwe3j.luna.akamaiapis.net/billing-usage/v1/contractusagedata/contract/C-6JGLXF/6/2014",
-        "url": base_url + "testapi/v1/t3",
+        "path": "testapi/v1/t3",
         "method": "POST",
         "body": data
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, false, false, nonce, timestamp);
+      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, false, false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -60,11 +60,11 @@ describe('Signature Generation', function() {
 
       var request = {
         //"url": "https://akaa-kax6r2oleojomqr3-q2i5ed3v35xfwe3j.luna.akamaiapis.net/billing-usage/v1/contractusagedata/contract/C-6JGLXF/6/2014",
-        "url": base_url + "testapi/v1/t3",
+        "path": "testapi/v1/t3",
         "method": "POST",
         "body": data
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, false, false, nonce, timestamp);
+      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, false, false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -75,11 +75,11 @@ describe('Signature Generation', function() {
       var data = "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd";
       var request = {
         //"url": "https://akaa-kax6r2oleojomqr3-q2i5ed3v35xfwe3j.luna.akamaiapis.net/billing-usage/v1/contractusagedata/contract/C-6JGLXF/6/2014",
-        "url": base_url + "testapi/v1/t3",
+        "path": "testapi/v1/t3",
         "method": "POST",
         "body": data
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, false, false, nonce, timestamp);
+      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, false, false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -90,11 +90,11 @@ describe('Signature Generation', function() {
       var data = "";
       var request = {
         //"url": "https://akaa-kax6r2oleojomqr3-q2i5ed3v35xfwe3j.luna.akamaiapis.net/billing-usage/v1/contractusagedata/contract/C-6JGLXF/6/2014",
-        "url": base_url + "testapi/v1/t6",
+        "path": "testapi/v1/t6",
         "method": "POST",
         "body": data
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, false, false, nonce, timestamp);
+      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, false, false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
 
     });
@@ -108,11 +108,11 @@ describe('Signature Generation', function() {
       };
       var request = {
         //"url": "https://akaa-kax6r2oleojomqr3-q2i5ed3v35xfwe3j.luna.akamaiapis.net/billing-usage/v1/contractusagedata/contract/C-6JGLXF/6/2014",
-        "url": base_url + "testapi/v1/t4",
+        "path": "testapi/v1/t4",
         "method": "GET",
         "headers": headers
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, ["X-Test1"], false, nonce, timestamp);
+      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, ["X-Test1"], false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -125,11 +125,11 @@ describe('Signature Generation', function() {
       };
       var request = {
         //"url": "https://akaa-kax6r2oleojomqr3-q2i5ed3v35xfwe3j.luna.akamaiapis.net/billing-usage/v1/contractusagedata/contract/C-6JGLXF/6/2014",
-        "url": base_url + "testapi/v1/t4",
+        "path": "testapi/v1/t4",
         "method": "GET",
         "headers": headers
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, ["X-Test1"], false, nonce, timestamp);
+      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, ["X-Test1"], false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -142,11 +142,11 @@ describe('Signature Generation', function() {
       var expected_header = "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=WtnneL539UadAAOJwnsXvPqT4Kt6z7HMgBEwAFpt3+c=";
       var request = {
         //"url": "https://akaa-kax6r2oleojomqr3-q2i5ed3v35xfwe3j.luna.akamaiapis.net/billing-usage/v1/contractusagedata/contract/C-6JGLXF/6/2014",
-        "url": base_url + "testapi/v1/t4",
+        "path": "testapi/v1/t4",
         "method": "GET",
         "headers": headers
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, ["X-Test1"], false, nonce, timestamp);
+      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, ["X-Test1"], false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -161,11 +161,11 @@ describe('Signature Generation', function() {
       var expected_header = "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=Wus73Nx8jOYM+kkBFF2q8D1EATRIMr0WLWwpLBgkBqY=";
       var request = {
         //"url": "https://akaa-kax6r2oleojomqr3-q2i5ed3v35xfwe3j.luna.akamaiapis.net/billing-usage/v1/contractusagedata/contract/C-6JGLXF/6/2014",
-        "url": base_url + "testapi/v1/t4",
+        "path": "testapi/v1/t4",
         "method": "GET",
         "headers": headers
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, ["X-Test1", "X-Test2", "X-Test3"], false, nonce, timestamp);
+      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, ["X-Test1", "X-Test2", "X-Test3"], false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -181,11 +181,11 @@ describe('Signature Generation', function() {
       var expected_header = "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=Knd/jc0A5Ghhizjayr0AUUvl2MZjBpS3FDSzvtq4Ixc=";
       var request = {
         //"url": "https://akaa-kax6r2oleojomqr3-q2i5ed3v35xfwe3j.luna.akamaiapis.net/billing-usage/v1/contractusagedata/contract/C-6JGLXF/6/2014",
-        "url": base_url + "testapi/v1/t5",
+        "path": "testapi/v1/t5",
         "method": "GET",
         "headers": headers
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, ["X-Test1", "X-Test2", "X-Test3"], false, nonce, timestamp);
+      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, ["X-Test1", "X-Test2", "X-Test3"], false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -196,11 +196,11 @@ describe('Signature Generation', function() {
       var expected_header = "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=GNBWEYSEWOLtu+7dD52da2C39aX/Jchpon3K/AmBqBU=";
       var request = {
         //"url": "https://akaa-kax6r2oleojomqr3-q2i5ed3v35xfwe3j.luna.akamaiapis.net/billing-usage/v1/contractusagedata/contract/C-6JGLXF/6/2014",
-        "url": base_url + "testapi/v1/t6",
+        "path": "testapi/v1/t6",
         "method": "PUT",
         "body": data
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, false, false, nonce, timestamp);
+      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, false, false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
