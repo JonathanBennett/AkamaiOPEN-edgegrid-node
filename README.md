@@ -68,3 +68,10 @@ Calls using the edgegrid client can also be chained as per the following;
 Headers for the request must be supplied as an object as name : value pairs. You do not need to supply form-data headers or content lengths - that will cause authentication headers on the API.
 
 The request BODY can be provided as either an object or as an already POST data formed string.
+
+
+## Contributors
+
+Thanks to people who have contributed to this.
+
+* [@dariusk](https://github.com/dariusk)
