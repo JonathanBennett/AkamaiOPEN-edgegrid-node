@@ -50,6 +50,33 @@ Basic use of the library looks like the following. This will prepare the auth he
 
 ```
 
+In addition passing the credentials manually as above, you may also authenticate using a `.edgerc` file, specifying its path and the group name (default is 'default'):
+
+```javascript
+var eg = new EdgeGrid({
+  path: '/path/to/.edgerc',
+  group: 'mygroup'
+});
+```
+
+An `.edgerc` file contains groups of credentials and is usually hosted in your home directory:
+
+```plaintext
+[default]
+host = akaa-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.luna.akamaiapis.net/
+client_token = akab-XXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX
+client_secret = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+access_token = akab-XXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX
+max-body = 131072
+
+[mygroup]
+host = akaa-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.luna.akamaiapis.net/
+client_token = akab-XXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX
+client_secret = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+access_token = akab-XXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX
+max-body = 131072
+```
+
 Calls using the edgegrid client can also be chained as per the following;
 
 ```javascript
