@@ -110,8 +110,22 @@ EdgeGrid.prototype.send = function(callback) {
   request.port = parts.port;
   request.path = parts.path;
 
+  // headers are case-insensitive so this function returns the value of a header
+  // no matter what its case is. Returns undefined if there's no header defined.
+  request.getHeader = function(header) {
+    var result = undefined;
+    for (k in this.headers) {
+      if (k.toLowerCase() === header) {
+        result = this.headers[k];
+        break;
+      }
+    }
+    return result;
+  }
+
   if (request.method == "POST" || request.method == "PUT") {
-    request.headers["content-type"] = 'application/x-www-form-urlencoded';
+    // Accept user-defined, case-insensitive content-type header -- or use default type
+    request.headers['content-type'] = request.getHeader('content-type') || 'application/x-www-form-urlencoded';
     request.headers['content-length'] = request.body.length;
   }
 
