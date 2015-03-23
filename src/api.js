@@ -123,7 +123,7 @@ EdgeGrid.prototype.send = function(callback) {
     return result;
   }
 
-  if (request.method == "POST" || request.method == "PUT") {
+  if (request.method == "POST" || request.method == "PUT" || request.method == "DELETE") {
     // Accept user-defined, case-insensitive content-type header -- or use default type
     request.headers['content-type'] = request.getHeader('content-type') || 'application/x-www-form-urlencoded';
     request.headers['content-length'] = request.body.length;
@@ -142,7 +142,7 @@ EdgeGrid.prototype.send = function(callback) {
     });
   });
 
-  if (request.method == "POST" || request.method == "PUT") {
+  if (request.method == "POST" || request.method == "PUT" || request.method == "DELETE") {
     req.write(request.body);
   }
 
