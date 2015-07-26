@@ -10,7 +10,10 @@ var uuid = require('node-uuid'),
 
 // Set output level
 var logger = log4js.getLogger();
-logger.setLevel(log4js.levels.ERROR);
+
+if (!process.env.LOG4JS_CONFIG) {
+  logger.setLevel(log4js.levels.ERROR);
+}
 
 var _headers_to_sign = null,
   _max_body = null;
