@@ -102,3 +102,4 @@ The request BODY can be provided as either an object or as an already POST data 
 Thanks to people who have contributed to this.
 
 * [@dariusk](https://github.com/dariusk)
+* [@mdb](https://github.com/mdb)
