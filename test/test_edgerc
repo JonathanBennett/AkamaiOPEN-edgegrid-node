@@ -1,0 +1,13 @@
+[default]
+host = example.luna.akamaiapis.net
+client_token = clientToken
+client_secret = clientSecret
+access_token = accessToken
+max-body = 131072
+
+[group]
+host = groupexample.luna.akamaiapis.net
+client_token = groupClientToken
+client_secret = groupClientSecret
+access_token = groupAccessToken
+max-body = 131072
