@@ -11,3 +11,10 @@ client_token = groupClientToken
 client_secret = groupClientSecret
 access_token = groupAccessToken
 max-body = 131072
+
+[https]
+host = https://example.luna.akamaiapis.net
+client_token = groupClientToken
+client_secret = groupClientSecret
+access_token = groupAccessToken
+max-body = 131072
