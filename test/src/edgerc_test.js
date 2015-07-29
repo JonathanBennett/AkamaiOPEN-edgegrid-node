@@ -1,12 +1,12 @@
 var assert = require('assert'),
     path = require('path'),
-    edgerc = require('../src/edgerc');
+    edgerc = require('../../src/edgerc');
 
 describe('edgerc', function() {
   describe('the parsed edgrc file it returns', function() {
     describe('when it is not passed a second argument indicating config group', function() {
       beforeEach(function() {
-        this.config = edgerc(path.resolve(__dirname, 'test_edgerc'));
+        this.config = edgerc(path.resolve(__dirname, '../test_edgerc'));
       });
 
       it('reports the default host', function() {
@@ -28,7 +28,7 @@ describe('edgerc', function() {
 
     describe('when it is passed a second argument indicating config group', function() {
       beforeEach(function() {
-        this.config = edgerc(path.resolve(__dirname, 'test_edgerc'), 'group');
+        this.config = edgerc(path.resolve(__dirname, '../test_edgerc'), 'group');
       });
 
       it('reports the host associated with the group', function() {
@@ -50,7 +50,7 @@ describe('edgerc', function() {
 
     describe('when the group contains a host with the "https://" protocal specified', function() {
       beforeEach(function() {
-        this.config = edgerc(path.resolve(__dirname, 'test_edgerc'), 'https');
+        this.config = edgerc(path.resolve(__dirname, '../test_edgerc'), 'https');
       });
 
       it('reports a host with a valid URI string', function() {
