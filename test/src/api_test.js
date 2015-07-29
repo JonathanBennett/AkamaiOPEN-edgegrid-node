@@ -29,4 +29,15 @@ describe('Api', function() {
       assert.equal(this.api.config.base_uri, 'base.com');
     });
   });
+
+  describe('its behavior when it is not instantiated with valid credentials', function() {
+    it('throws the appropriate error', function() {
+      assert.throws(
+        function() {
+          return new Api();
+        },
+        /Insufficient Akamai credentials/
+      );
+    });
+  });
 });
