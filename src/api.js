@@ -9,8 +9,6 @@ var auth = require('./auth'),
   logger = require('./logger');
 
 var EdgeGrid = function(client_token, client_secret, access_token, base_uri) {
-  this.config = {};
-
   // accepting an object containing a path to .edgerc and a config group
   if (typeof arguments[0] === 'object') {
     var path = arguments[0].path;
@@ -22,18 +20,8 @@ var EdgeGrid = function(client_token, client_secret, access_token, base_uri) {
 
     this.config = edgerc(path, group);
   } else {
-    if (client_token === undefined || client_token === null) {
-      logger.error("No client token");
-      return false;
-    } else if (client_secret === undefined || client_secret === null) {
-      logger.error("No client secret");
-      return false;
-    } else if (access_token === undefined || access_token === null) {
-      logger.error("No access token");
-      return false;
-    } else if (base_uri === undefined || base_uri === null) {
-      logger.error("No base uri");
-      return false;
+    if (!validatedArgs([client_token, client_secret, access_token, base_uri])) {
+      throw new Error('Insufficient Akamai credentials');
     }
 
     this.config = {
@@ -104,5 +92,22 @@ EdgeGrid.prototype.send = function(callback) {
 
   req.end();
 };
+
+function validatedArgs(args) {
+  var expected = [
+    'client_token', 'client_secret', 'access_token', 'base_uri'
+  ],
+  valid = true,
+  i;
+
+  expected.forEach(function(arg, i) {
+    if (!args[i]) {
+      logger.error('No defined ' + arg);
+      valid = false;
+    }
+  });
+
+  return valid;
+}
 
 module.exports = EdgeGrid;
