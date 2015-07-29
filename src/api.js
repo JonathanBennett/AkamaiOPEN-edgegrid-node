@@ -1,6 +1,7 @@
 // Node modules
 var https = require('https'),
-  url = require('url');
+  url = require('url'),
+  request = require('request'),
   fs = require('fs');
 
 // EdgeGrid Auth Module
@@ -35,8 +36,8 @@ var EdgeGrid = function(client_token, client_secret, access_token, base_uri) {
   return this;
 };
 
-EdgeGrid.prototype.auth = function(request, callback) {
-  this.request = auth.generate_auth(request, this.config.client_token, this.config.client_secret, this.config.access_token, this.config.base_uri);
+EdgeGrid.prototype.auth = function(req, callback) {
+  this.request = auth.generate_auth(req, this.config.client_token, this.config.client_secret, this.config.access_token, this.config.base_uri);
 
   if (callback && typeof callback == "function") {
     callback(this);
@@ -46,51 +47,11 @@ EdgeGrid.prototype.auth = function(request, callback) {
 };
 
 EdgeGrid.prototype.send = function(callback) {
-  var request = this.request,
-    data = "";
+  request(this.request, function(error, response, body) {
+    if (error) { throw new Error(error); }
 
-  var parts = url.parse(request.url);
-  request.hostname = parts.hostname;
-  request.port = parts.port;
-  request.path = parts.path;
-
-  // headers are case-insensitive so this function returns the value of a header
-  // no matter what its case is. Returns undefined if there's no header defined.
-  request.getHeader = function(header) {
-    var result = undefined;
-    for (k in this.headers) {
-      if (k.toLowerCase() === header) {
-        result = this.headers[k];
-        break;
-      }
-    }
-    return result;
-  }
-
-  if (request.method == "POST" || request.method == "PUT" || request.method == "DELETE") {
-    // Accept user-defined, case-insensitive content-type header -- or use default type
-    request.headers['content-type'] = request.getHeader('content-type') || 'application/x-www-form-urlencoded';
-    request.headers['content-length'] = request.body.length;
-  }
-
-  var req = https.request(request, function(res) {
-    res.on('data', function(d) {
-      data += d;
-    });
-
-    res.on('end', function() {
-      if (callback && typeof callback == "function") {
-        callback(data, res);
-      }
-
-    });
+    callback(body, response);
   });
-
-  if (request.method == "POST" || request.method == "PUT" || request.method == "DELETE") {
-    req.write(request.body);
-  }
-
-  req.end();
 };
 
 function validatedArgs(args) {
