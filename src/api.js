@@ -48,7 +48,7 @@ var EdgeGrid = function(client_token, client_secret, access_token, base_uri) {
 };
 
 EdgeGrid.prototype.auth = function(request, callback) {
-  _request = auth.generate_auth(request, this.config.client_token, this.config.client_secret, this.config.access_token, this.config.base_uri);
+  this.request = auth.generate_auth(request, this.config.client_token, this.config.client_secret, this.config.access_token, this.config.base_uri);
 
   if (callback && typeof callback == "function") {
     callback(this);
@@ -58,7 +58,7 @@ EdgeGrid.prototype.auth = function(request, callback) {
 };
 
 EdgeGrid.prototype.send = function(callback) {
-  var request = _request,
+  var request = this.request,
     data = "";
 
   var parts = url.parse(request.url);
