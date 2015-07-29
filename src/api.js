@@ -1,10 +1,11 @@
 // Node modules
-
 var https = require('https'),
   url = require('url');
   fs = require('fs');
+
 // EdgeGrid Auth Module
-var auth = require('./auth.js');
+var auth = require('./auth'),
+  logger = require('./logger');
 
 var _client_token = null,
   _client_secret = null,
@@ -44,7 +45,7 @@ function parseEdgerc(path, conf) {
   }
   // if we escaped the parse loop without returning, something is wrong
   throw('An error occurred parsing the .edgerc file. You probably specified an invalid group name.');
-} 
+}
 
 var EdgeGrid = function(client_token, client_secret, access_token, base_uri) {
   // accepting an object containing a path to .edgerc and a config group
@@ -52,11 +53,11 @@ var EdgeGrid = function(client_token, client_secret, access_token, base_uri) {
     var path = arguments[0].path;
     var group = arguments[0].group;
     if (path === undefined) {
-      console.log("No .edgerc path");
+      logger.error("No .edgerc path");
       return false;
     }
     if (group === undefined) {
-      console.log("No .edgerc group provided, using 'default'");
+      logger.info("No .edgerc group provided, using 'default'");
       group = 'default';
     }
     var config = parseEdgerc(path, group);
@@ -67,16 +68,16 @@ var EdgeGrid = function(client_token, client_secret, access_token, base_uri) {
   }
   else {
     if (client_token === undefined || client_token === null) {
-      console.log("No client token");
+      logger.error("No client token");
       return false;
     } else if (client_secret === undefined || client_secret === null) {
-      console.log("No client secret");
+      logger.error("No client secret");
       return false;
     } else if (access_token === undefined || access_token === null) {
-      console.log("No access token");
+      logger.error("No access token");
       return false;
     } else if (base_uri === undefined || base_uri === null) {
-      console.log("No base uri");
+      logger.error("No base uri");
       return false;
     }
 
@@ -100,8 +101,7 @@ EdgeGrid.prototype.auth = function(request, callback) {
   return this;
 };
 
-EdgeGrid.prototype.send = function(callback) { 
-
+EdgeGrid.prototype.send = function(callback) {
   var request = _request,
     data = "";
 
