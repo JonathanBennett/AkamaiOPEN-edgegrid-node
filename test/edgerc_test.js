@@ -47,5 +47,15 @@ describe('edgerc', function() {
         assert.equal(this.config.access_token, 'groupAccessToken');
       });
     });
+
+    describe('when the group contains a host with the "https://" protocal specified', function() {
+      beforeEach(function() {
+        this.config = edgerc(path.resolve(__dirname, 'test_edgerc'), 'https');
+      });
+
+      it('reports a host with a valid URI string', function() {
+        assert.equal(this.config.host, 'https://example.luna.akamaiapis.net');
+      });
+    });
   });
 });
