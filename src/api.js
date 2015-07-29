@@ -8,13 +8,9 @@ var auth = require('./auth'),
   edgerc = require('./edgerc'),
   logger = require('./logger');
 
-var _client_token = null,
-  _client_secret = null,
-  _access_token = null,
-  _base_uri = null,
-  _request = null;
-
 var EdgeGrid = function(client_token, client_secret, access_token, base_uri) {
+  this.config = {};
+
   // accepting an object containing a path to .edgerc and a config group
   if (typeof arguments[0] === 'object') {
     var path = arguments[0].path;
@@ -24,13 +20,8 @@ var EdgeGrid = function(client_token, client_secret, access_token, base_uri) {
       return false;
     }
 
-    var config = edgerc(path, group);
-    _client_token = config.client_token;
-    _client_secret = config.client_secret;
-    _access_token = config.access_token;
-    _base_uri = config.host;
-  }
-  else {
+    this.config = edgerc(path, group);
+  } else {
     if (client_token === undefined || client_token === null) {
       logger.error("No client token");
       return false;
@@ -45,18 +36,19 @@ var EdgeGrid = function(client_token, client_secret, access_token, base_uri) {
       return false;
     }
 
-    _client_token = client_token;
-    _client_secret = client_secret;
-    _access_token = access_token;
-    _base_uri = base_uri;
+    this.config = {
+      client_token: client_token,
+      client_secret: client_secret,
+      access_token: access_token,
+      base_uri: base_uri
+    };
   }
 
   return this;
-
 };
 
 EdgeGrid.prototype.auth = function(request, callback) {
-  _request = auth.generate_auth(request, _client_token, _client_secret, _access_token, _base_uri);
+  _request = auth.generate_auth(request, this.config.client_token, this.config.client_secret, this.config.access_token, this.config.base_uri);
 
   if (callback && typeof callback == "function") {
     callback(this);
