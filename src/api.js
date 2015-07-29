@@ -102,7 +102,10 @@ function validatedArgs(args) {
 
   expected.forEach(function(arg, i) {
     if (!args[i]) {
-      logger.error('No defined ' + arg);
+      if (process.env.EDGEGRID_ENV !== 'test' ) {
+        logger.error('No defined ' + arg);
+      }
+
       valid = false;
     }
   });
