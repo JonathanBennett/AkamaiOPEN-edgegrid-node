@@ -45,7 +45,7 @@ module.exports = function(path, conf) {
       confData = getGroup(edgerc, confGroup);
 
   if (!confData) {
-    throw('An error occurred parsing the .edgerc file. You probably specified an invalid group name.');
+    throw new Error('An error occurred parsing the .edgerc file. You probably specified an invalid group name.');
   }
 
   return buildObj(confData);

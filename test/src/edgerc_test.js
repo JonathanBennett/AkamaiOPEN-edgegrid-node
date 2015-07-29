@@ -57,5 +57,16 @@ describe('edgerc', function() {
         assert.equal(this.config.host, 'https://example.luna.akamaiapis.net');
       });
     });
+
+    describe('when the group passed does not exist', function() {
+      it('throws the proper error', function() {
+        assert.throws(
+          function() {
+            return edgerc(path.resolve(__dirname, '../test_edgerc'), 'blah');
+          },
+          /An error occurred parsing the .edgerc file. You probably specified an invalid group name./
+        );
+      });
+    });
   });
 });
