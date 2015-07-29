@@ -5,6 +5,7 @@ var https = require('https'),
 
 // EdgeGrid Auth Module
 var auth = require('./auth'),
+  edgerc = require('./edgerc'),
   logger = require('./logger');
 
 var _client_token = null,
@@ -12,40 +13,6 @@ var _client_token = null,
   _access_token = null,
   _base_uri = null,
   _request = null;
-
-function parseEdgerc(path, conf) {
-  var edgerc = fs.readFileSync(path).toString().split("\n");
-  var confData = [];
-  for(var i=0;i<edgerc.length;i++) {
-    var matchConf = edgerc[i].match(/\[(.*)\]/);
-    // if we found our matching config, push the next 4 lines into a temp array
-    if (matchConf && matchConf[1] === conf) {
-      confData.push(edgerc[i+1]);
-      confData.push(edgerc[i+2]);
-      confData.push(edgerc[i+3]);
-      confData.push(edgerc[i+4]);
-      // convert the array to a descriptive object
-      confData = confData.map(function(el) {
-        var ret = {}
-        var key = el.split(' = ')[0].trim();
-        var val = el.split(' = ')[1].trim();
-        if (key === 'host') {
-          val = 'https://' + val;
-        }
-        ret[key] = val;
-        return ret;
-      });
-      // turn the array of objects into a single object
-      var result = {};
-      for (var i = 0, length = confData.length; i < length; i++) {
-        result[Object.keys(confData[i])[0]] = confData[i][Object.keys(confData[i])[0]];
-      }
-      return result;
-    }
-  }
-  // if we escaped the parse loop without returning, something is wrong
-  throw('An error occurred parsing the .edgerc file. You probably specified an invalid group name.');
-}
 
 var EdgeGrid = function(client_token, client_secret, access_token, base_uri) {
   // accepting an object containing a path to .edgerc and a config group
@@ -56,11 +23,8 @@ var EdgeGrid = function(client_token, client_secret, access_token, base_uri) {
       logger.error("No .edgerc path");
       return false;
     }
-    if (group === undefined) {
-      logger.info("No .edgerc group provided, using 'default'");
-      group = 'default';
-    }
-    var config = parseEdgerc(path, group);
+
+    var config = edgerc(path, group);
     _client_token = config.client_token;
     _client_secret = config.client_secret;
     _access_token = config.access_token;
