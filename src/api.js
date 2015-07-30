@@ -52,7 +52,7 @@ EdgeGrid.prototype._setConfigFromStrings = function(client_token, client_secret,
     client_token: client_token,
     client_secret: client_secret,
     access_token: access_token,
-    host: host
+    host: host.indexOf('https://') > -1 ? host : 'https://' + host
   };
 };
 

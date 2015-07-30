@@ -26,7 +26,20 @@ describe('Api', function() {
     });
 
     it('reports the API host', function() {
-      assert.equal(this.api.config.host, 'base.com');
+      assert.equal(this.api.config.host, 'https://base.com');
+    });
+
+    describe('when it is instantiated with an API host that already contains the protocol', function() {
+      it('it does not double declare the protocol', function() {
+        this.api = new Api(
+          'clientToken',
+          'clientSecret',
+          'accessToken',
+          'https://base.com'
+        );
+
+        assert.equal(this.api.config.host, 'https://base.com');
+      });
     });
 
     describe('when it is instantiated with an object', function() {
