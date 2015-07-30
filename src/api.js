@@ -13,14 +13,8 @@ var EdgeGrid = function(client_token, client_secret, access_token, host) {
   }
 };
 
-EdgeGrid.prototype.auth = function(req, callback) {
+EdgeGrid.prototype.auth = function(req) {
   this.request = auth.generate_auth(req, this.config.client_token, this.config.client_secret, this.config.access_token, this.config.host);
-
-  if (callback && typeof callback == "function") {
-    callback(this);
-  }
-
-  return this;
 };
 
 EdgeGrid.prototype.send = function(callback) {

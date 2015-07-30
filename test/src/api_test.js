@@ -124,4 +124,19 @@ describe('Api', function() {
       );
     });
   });
+
+  describe('#auth', function() {
+    it('adds an Authorization header to the request it is passed', function() {
+      this.api.auth({
+        "path": "/foo",
+        "method": "GET",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+         "body": {}
+      });
+
+      assert.equal(typeof this.api.request.headers.Authorization === 'string', true);
+    });
+  });
 });
