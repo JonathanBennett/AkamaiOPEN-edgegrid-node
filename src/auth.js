@@ -148,7 +148,7 @@ var make_auth_header = function(request, client_token, access_token, client_secr
 };
 
 module.exports = {
-  generate_auth: function(request, client_token, client_secret, access_token, base_uri, headers_to_sign, max_body, guid, timestamp) {
+  generate_auth: function(request, client_token, client_secret, access_token, host, headers_to_sign, max_body, guid, timestamp) {
 
     _max_body = max_body || 2048;
     _headers_to_sign = headers_to_sign || [];
@@ -159,7 +159,7 @@ module.exports = {
     if (!request.hasOwnProperty("headers")) {
       request.headers = {};
     }
-    request.url = base_uri + request.path;
+    request.url = host + request.path;
     request.headers.Authorization = make_auth_header(request, client_token, access_token, client_secret, timestamp, guid);
     return request;
   }
