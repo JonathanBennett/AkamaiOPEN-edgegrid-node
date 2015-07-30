@@ -13,7 +13,8 @@ var EdgeGrid = function(client_token, client_secret, access_token, host) {
   if (typeof arguments[0] === 'object') {
     var path = arguments[0].path;
     var group = arguments[0].group;
-    if (path === undefined) {
+
+    if (!path) {
       if (!process.env.EDGEGRID_ENV === 'test') {
         logger.error('No .edgerc path');
       }

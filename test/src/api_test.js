@@ -77,11 +77,22 @@ describe('Api', function() {
         });
       });
 
-      describe('when it is instantiated with an object that does not specfy a path nor a group', function() {
+      describe('when it is instantiated with an object that does not specify a path nor a group', function() {
         it('throws the appropriate error', function() {
           assert.throws(
             function() {
               return new Api({});
+            },
+            /No edgerc path/
+          );
+        });
+      });
+
+      describe('when it is instantiated with an object that specifies an inadequate path', function() {
+        it('throws the appropriate error', function() {
+          assert.throws(
+            function() {
+              return new Api({path: ''});
             },
             /No edgerc path/
           );
