@@ -1,6 +1,6 @@
 // Node modules
 var https = require('https'),
-  url = require('url');
+  url = require('url'),
   fs = require('fs');
 
 // EdgeGrid Auth Module
