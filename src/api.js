@@ -1,6 +1,4 @@
-var https = require('https'),
-    url = require('url'),
-    request = require('request'),
+var request = require('request'),
     fs = require('fs'),
     auth = require('./auth'),
     edgerc = require('./edgerc'),
