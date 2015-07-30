@@ -1,42 +1,19 @@
 // Node modules
 var https = require('https'),
-  url = require('url'),
-  fs = require('fs');
+    url = require('url'),
+    fs = require('fs');
 
-// EdgeGrid Auth Module
 var auth = require('./auth'),
-  edgerc = require('./edgerc'),
-  logger = require('./logger');
+    edgerc = require('./edgerc'),
+    logger = require('./logger');
 
 var EdgeGrid = function(client_token, client_secret, access_token, host) {
   // accepting an object containing a path to .edgerc and a config group
   if (typeof arguments[0] === 'object') {
-    var path = arguments[0].path;
-    var group = arguments[0].group;
-
-    if (!path) {
-      if (!process.env.EDGEGRID_ENV === 'test') {
-        logger.error('No .edgerc path');
-      }
-
-      throw new Error('No edgerc path');
-    }
-
-    this.config = edgerc(path, group);
+    this._setConfigFromObj(arguments[0]);
   } else {
-    if (!validatedArgs([client_token, client_secret, access_token, host])) {
-      throw new Error('Insufficient Akamai credentials');
-    }
-
-    this.config = {
-      client_token: client_token,
-      client_secret: client_secret,
-      access_token: access_token,
-      host: host
-    };
+    this._setConfigFromStrings(client_token, client_secret, access_token, host);
   }
-
-  return this;
 };
 
 EdgeGrid.prototype.auth = function(request, callback) {
@@ -97,12 +74,37 @@ EdgeGrid.prototype.send = function(callback) {
   req.end();
 };
 
+EdgeGrid.prototype._setConfigFromObj = function(obj) {
+  if (!obj.path) {
+    if (!process.env.EDGEGRID_ENV === 'test') {
+      logger.error('No .edgerc path');
+    }
+
+    throw new Error('No edgerc path');
+  }
+
+  this.config = edgerc(obj.path, obj.group);
+};
+
+EdgeGrid.prototype._setConfigFromStrings = function(client_token, client_secret, access_token, host) {
+  if (!validatedArgs([client_token, client_secret, access_token, host])) {
+    throw new Error('Insufficient Akamai credentials');
+  }
+
+  this.config = {
+    client_token: client_token,
+    client_secret: client_secret,
+    access_token: access_token,
+    host: host
+  };
+};
+
 function validatedArgs(args) {
   var expected = [
-    'client_token', 'client_secret', 'access_token', 'host'
-  ],
-  valid = true,
-  i;
+        'client_token', 'client_secret', 'access_token', 'host'
+      ],
+      valid = true,
+      i;
 
   expected.forEach(function(arg, i) {
     if (!args[i]) {
