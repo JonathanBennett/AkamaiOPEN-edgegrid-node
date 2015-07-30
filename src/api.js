@@ -1,13 +1,10 @@
-// Node modules
 var https = require('https'),
-  url = require('url'),
-  request = require('request'),
-  fs = require('fs');
-
-// EdgeGrid Auth Module
-var auth = require('./auth'),
-  edgerc = require('./edgerc'),
-  logger = require('./logger');
+    url = require('url'),
+    request = require('request'),
+    fs = require('fs'),
+    auth = require('./auth'),
+    edgerc = require('./edgerc'),
+    logger = require('./logger');
 
 var EdgeGrid = function(client_token, client_secret, access_token, base_uri) {
   // accepting an object containing a path to .edgerc and a config group
@@ -56,10 +53,10 @@ EdgeGrid.prototype.send = function(callback) {
 
 function validatedArgs(args) {
   var expected = [
-    'client_token', 'client_secret', 'access_token', 'base_uri'
-  ],
-  valid = true,
-  i;
+        'client_token', 'client_secret', 'access_token', 'base_uri'
+      ],
+      valid = true,
+      i;
 
   expected.forEach(function(arg, i) {
     if (!args[i]) {
