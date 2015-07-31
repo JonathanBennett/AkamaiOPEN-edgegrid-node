@@ -126,17 +126,59 @@ describe('Api', function() {
   });
 
   describe('#auth', function() {
-    it('adds an Authorization header to the request it is passed', function() {
-      this.api.auth({
-        "path": "/foo",
-        "method": "GET",
-        "headers": {
-          "Content-Type": "application/json"
-        },
-         "body": {}
+    describe('when minimal request options are passed', function() {
+      beforeEach(function() {
+        this.api.auth({
+          path: '/foo'
+        });
       });
 
-      assert.equal(typeof this.api.request.headers.Authorization === 'string', true);
+      it('adds an Authorization header to the request it is passed', function() {
+        assert.equal(typeof this.api.request.headers.Authorization === 'string', true);
+      });
+
+      it('ensures a default Content-Type of application/json', function() {
+        assert.equal(this.api.request.headers['Content-Type'], 'application/json');
+      });
+
+      it('ensures a default GET method', function() {
+        assert.equal(this.api.request.method, 'GET');
+      });
+
+      it('ensures a default empty body', function() {
+        assert.equal(this.api.request.body, '');
+      });
+    });
+
+    describe('when more specific request options are passed', function() {
+      beforeEach(function() {
+        this.api.auth({
+          path: '/foo',
+          method: 'POST',
+          body: { foo: 'bar' },
+          somethingArbitrary: 'someValue'
+        });
+      });
+
+      it('adds an Authorization header to the request it is passed', function() {
+        assert.equal(typeof this.api.request.headers.Authorization === 'string', true);
+      });
+
+      it('ensures a default Content-Type of application/json', function() {
+        assert.equal(this.api.request.headers['Content-Type'], 'application/json');
+      });
+
+      it('uses the specified GET method', function() {
+        assert.equal(this.api.request.method, 'POST');
+      });
+
+      it('uses the specified body parsed as a key/value pair string', function() {
+        assert.equal(this.api.request.body, 'foo=%22bar%22&');
+      });
+
+      it('extends the default request options with any others specified', function() {
+        assert.equal(this.api.request.somethingArbitrary, 'someValue');
+      });
     });
   });
 });
