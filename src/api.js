@@ -16,11 +16,11 @@ var EdgeGrid = function(client_token, client_secret, access_token, host) {
 
 EdgeGrid.prototype.auth = function(req) {
   req = helpers.extend(req, {
-    "method": "GET",
-    "headers": {
-      "Content-Type": "application/json"
+    method: 'GET',
+    headers: {
+      'Content-Type': "application/json"
     },
-     "body": {}
+     body: {}
   });
 
   this.request = auth.generate_auth(req, this.config.client_token, this.config.client_secret, this.config.access_token, this.config.host);
