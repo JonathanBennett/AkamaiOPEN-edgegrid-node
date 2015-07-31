@@ -148,6 +148,10 @@ describe('Api', function() {
       it('ensures a default empty body', function() {
         assert.equal(this.api.request.body, '');
       });
+
+      it('ensures a url is properly declared', function() {
+        assert.equal(this.api.request.url, 'https://base.com/foo');
+      });
     });
 
     describe('when more specific request options are passed', function() {
