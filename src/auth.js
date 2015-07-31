@@ -6,14 +6,7 @@ var uuid = require('node-uuid'),
   crypto = require('crypto'),
   _ = require('underscore'),
   url = require('url'),
-  log4js = require('log4js');
-
-// Set output level
-var logger = log4js.getLogger();
-
-if (!process.env.LOG4JS_CONFIG) {
-  logger.setLevel(log4js.levels.ERROR);
-}
+  logger = require('./logger');
 
 var _headers_to_sign = null,
   _max_body = null;
