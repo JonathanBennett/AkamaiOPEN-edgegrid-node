@@ -1,4 +1,5 @@
 var assert = require('assert'),
+    nock = require('nock'),
     path = require('path'),
     Api = require('../../src/api');
 
@@ -182,6 +183,51 @@ describe('Api', function() {
 
       it('extends the default request options with any others specified', function() {
         assert.equal(this.api.request.somethingArbitrary, 'someValue');
+      });
+    });
+  });
+
+  describe('#send', function() {
+    describe('when authentication is done with a simple options object specifying only a path', function() {
+      beforeEach(function() {
+        var akamaiResp = nock('https://base.com')
+              .get('/foo')
+              .reply(200, {
+                foo: 'bar'
+               });
+      });
+
+      it('sends the HTTP GET request created by #auth', function(done) {
+        this.api.auth({
+          path: '/foo'
+        });
+
+        this.api.send(function(data, resp) {
+          assert.equal(JSON.parse(data).foo, 'bar');
+          done();
+        });
+      });
+    });
+
+    describe('when authentication is done with a more complex options object specifying only a path', function() {
+      beforeEach(function() {
+        var akamaiResp = nock('https://base.com')
+              .post('/foo')
+              .reply(200, {
+                foo: 'bar'
+               });
+      });
+
+      it('sends the HTTP created by #auth', function(done) {
+        this.api.auth({
+          path: '/foo',
+          method: 'POST'
+        });
+
+        this.api.send(function(data, resp) {
+          assert.equal(JSON.parse(data).foo, 'bar');
+          done();
+        });
       });
     });
   });

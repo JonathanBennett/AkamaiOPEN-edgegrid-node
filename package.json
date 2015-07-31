@@ -25,6 +25,7 @@
     "underscore": "^1.6.0"
   },
   "devDependencies": {
-    "mocha": "2.2.5"
+    "mocha": "2.2.5",
+    "nock": "2.7.0"
   }
 }
