@@ -1,10 +1,9 @@
-// Node modules
-var https = require('https'),
-    url = require('url'),
-    fs = require('fs');
 
-var auth = require('./auth'),
+var request = require('request'),
+    fs = require('fs'),
+    auth = require('./auth'),
     edgerc = require('./edgerc'),
+    helpers = require('./helpers'),
     logger = require('./logger');
 
 var EdgeGrid = function(client_token, client_secret, access_token, host) {
@@ -16,62 +15,26 @@ var EdgeGrid = function(client_token, client_secret, access_token, host) {
   }
 };
 
-EdgeGrid.prototype.auth = function(request, callback) {
-  this.request = auth.generate_auth(request, this.config.client_token, this.config.client_secret, this.config.access_token, this.config.host);
+EdgeGrid.prototype.auth = function(req) {
+  req = helpers.extend(req, {
+    url: this.config.host + req.path,
+    method: 'GET',
+    headers: {
+      'Content-Type': "application/json"
+    },
+    body: {}
+  });
 
-  if (callback && typeof callback == "function") {
-    callback(this);
-  }
-
-  return this;
+  this.request = auth.generate_auth(req, this.config.client_token, this.config.client_secret, this.config.access_token, this.config.host);
 };
 
 EdgeGrid.prototype.send = function(callback) {
-  var request = this.request,
-    data = "";
 
-  var parts = url.parse(request.url);
-  request.hostname = parts.hostname;
-  request.port = parts.port;
-  request.path = parts.path;
+  request(this.request, function(error, response, body) {
+    if (error) { throw new Error(error); }
 
-  // headers are case-insensitive so this function returns the value of a header
-  // no matter what its case is. Returns undefined if there's no header defined.
-  request.getHeader = function(header) {
-    var result = undefined;
-    for (k in this.headers) {
-      if (k.toLowerCase() === header) {
-        result = this.headers[k];
-        break;
-      }
-    }
-    return result;
-  }
-
-  if (request.method == "POST" || request.method == "PUT" || request.method == "DELETE") {
-    // Accept user-defined, case-insensitive content-type header -- or use default type
-    request.headers['content-type'] = request.getHeader('content-type') || 'application/x-www-form-urlencoded';
-    request.headers['content-length'] = request.body.length;
-  }
-
-  var req = https.request(request, function(res) {
-    res.on('data', function(d) {
-      data += d;
-    });
-
-    res.on('end', function() {
-      if (callback && typeof callback == "function") {
-        callback(data, res);
-      }
-
-    });
+    callback(body, response);
   });
-
-  if (request.method == "POST" || request.method == "PUT" || request.method == "DELETE") {
-    req.write(request.body);
-  }
-
-  req.end();
 };
 
 EdgeGrid.prototype._setConfigFromObj = function(obj) {
@@ -95,7 +58,7 @@ EdgeGrid.prototype._setConfigFromStrings = function(client_token, client_secret,
     client_token: client_token,
     client_secret: client_secret,
     access_token: access_token,
-    host: host
+    host: host.indexOf('https://') > -1 ? host : 'https://' + host
   };
 };
 
@@ -118,5 +81,17 @@ function validatedArgs(args) {
 
   return valid;
 }
+
+EdgeGrid.prototype._setConfigFromObj = function(obj) {
+  if (!obj.path) {
+    if (!process.env.EDGEGRID_ENV === 'test') {
+      logger.error('No .edgerc path');
+    }
+
+    throw new Error('No edgerc path');
+  }
+
+  this.config = edgerc(obj.path, obj.group);
+};
 
 module.exports = EdgeGrid;
