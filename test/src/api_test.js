@@ -125,7 +125,6 @@ describe('Api', function() {
       );
     });
   });
-
   describe('#auth', function() {
     describe('when minimal request options are passed', function() {
       beforeEach(function() {

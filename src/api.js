@@ -1,3 +1,4 @@
+
 var request = require('request'),
     fs = require('fs'),
     auth = require('./auth'),
@@ -28,6 +29,7 @@ EdgeGrid.prototype.auth = function(req) {
 };
 
 EdgeGrid.prototype.send = function(callback) {
+
   request(this.request, function(error, response, body) {
     if (error) { throw new Error(error); }
 
@@ -79,5 +81,17 @@ function validatedArgs(args) {
 
   return valid;
 }
+
+EdgeGrid.prototype._setConfigFromObj = function(obj) {
+  if (!obj.path) {
+    if (!process.env.EDGEGRID_ENV === 'test') {
+      logger.error('No .edgerc path');
+    }
+
+    throw new Error('No edgerc path');
+  }
+
+  this.config = edgerc(obj.path, obj.group);
+};
 
 module.exports = EdgeGrid;
