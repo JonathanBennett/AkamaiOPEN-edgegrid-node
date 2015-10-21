@@ -125,6 +125,7 @@ describe('Api', function() {
       );
     });
   });
+
   describe('#auth', function() {
     describe('when minimal request options are passed', function() {
       beforeEach(function() {
@@ -229,5 +230,28 @@ describe('Api', function() {
         });
       });
     });
+
+    describe('when the initial request redirects', function() {
+      it('correctly follows the redirect and re-signs the request', function(done) {
+        nock('https://base.com')
+          .get('/foo')
+          .reply(302, undefined, {
+              'Location': 'https://base.com/bar'
+          })
+          .get('/bar')
+          .reply(200, {
+            bar: 'bim'
+          });
+
+        this.api.auth({
+          path: '/foo',
+        });
+
+        this.api.send(function(data, resp) {
+          assert.equal(JSON.parse(data).bar, 'bim');
+          done();
+        });
+      });
+    })
   });
 });

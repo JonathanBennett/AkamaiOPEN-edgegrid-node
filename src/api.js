@@ -1,6 +1,7 @@
 
 var request = require('request'),
     fs = require('fs'),
+    url = require('url'),
     auth = require('./auth'),
     edgerc = require('./edgerc'),
     helpers = require('./helpers'),
@@ -22,6 +23,7 @@ EdgeGrid.prototype.auth = function(req) {
     headers: {
       'Content-Type': "application/json"
     },
+    followRedirect: false,
     body: {}
   });
 
@@ -33,8 +35,24 @@ EdgeGrid.prototype.send = function(callback) {
   request(this.request, function(error, response, body) {
     if (error) { throw new Error(error); }
 
+    if (helpers.isRedirect(response.statusCode)) {
+      this._handleRedirect(response, callback);
+      return;
+    }
+
     callback(body, response);
-  });
+  }.bind(this));
+};
+
+EdgeGrid.prototype._handleRedirect = function(resp, callback) {
+  var parsedUrl = url.parse(resp.headers['location']);
+
+  resp.headers['authorization'] = undefined;
+  this.request.url = undefined;
+  this.request.path = parsedUrl.path;
+
+  this.auth(this.request);
+  this.send(callback);
 };
 
 EdgeGrid.prototype._setConfigFromObj = function(obj) {
