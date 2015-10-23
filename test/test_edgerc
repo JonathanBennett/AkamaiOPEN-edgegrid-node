@@ -5,16 +5,16 @@ client_secret = clientSecret
 access_token = accessToken
 max-body = 131072
 
-[group]
-host = groupexample.luna.akamaiapis.net
-client_token = groupClientToken
-client_secret = groupClientSecret
-access_token = groupAccessToken
+[section]
+host = sectionexample.luna.akamaiapis.net
+client_token = sectionClientToken
+client_secret = sectionClientSecret
+access_token = sectionAccessToken
 max-body = 131072
 
 [https]
 host = https://example.luna.akamaiapis.net
-client_token = groupClientToken
-client_secret = groupClientSecret
-access_token = groupAccessToken
+client_token = sectionClientToken
+client_secret = sectionClientSecret
+access_token = sectionAccessToken
 max-body = 131072
