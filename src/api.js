@@ -8,7 +8,7 @@ var request = require('request'),
     logger = require('./logger');
 
 var EdgeGrid = function(client_token, client_secret, access_token, host) {
-  // accepting an object containing a path to .edgerc and a config group
+  // accepting an object containing a path to .edgerc and a config section
   if (typeof arguments[0] === 'object') {
     this._setConfigFromObj(arguments[0]);
   } else {
@@ -64,7 +64,7 @@ EdgeGrid.prototype._setConfigFromObj = function(obj) {
     throw new Error('No edgerc path');
   }
 
-  this.config = edgerc(obj.path, obj.group);
+  this.config = edgerc(obj.path, obj.section);
 };
 
 EdgeGrid.prototype._setConfigFromStrings = function(client_token, client_secret, access_token, host) {
@@ -109,7 +109,7 @@ EdgeGrid.prototype._setConfigFromObj = function(obj) {
     throw new Error('No edgerc path');
   }
 
-  this.config = edgerc(obj.path, obj.group);
+  this.config = edgerc(obj.path, obj.section);
 };
 
 module.exports = EdgeGrid;

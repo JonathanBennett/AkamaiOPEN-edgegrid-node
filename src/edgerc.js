@@ -1,19 +1,19 @@
 var fs = require('fs');
 
-function getGroup(lines, groupName) {
+function getSection(lines, sectionName) {
     var match = /\[(.*)\]/,
         lineMatch,
-        group;
+        section;
 
     lines.forEach(function(line, i) {
         lineMatch = line.match(match);
 
-        if (lineMatch && lineMatch[1] === groupName) {
-            group = lines.slice(i + 1, i + 5);
+        if (lineMatch && lineMatch[1] === sectionName) {
+            section = lines.slice(i + 1, i + 5);
         }
     });
 
-    return group;
+    return section;
 }
 
 function validatedConfig(config) {
@@ -23,6 +23,7 @@ function validatedConfig(config) {
 
     config.host = 'https://' + config.host;
 
+    console.log("Config: ", config);
     return config;
 }
 
@@ -46,11 +47,11 @@ function buildObj(configs) {
 
 module.exports = function(path, conf) {
     var edgerc = fs.readFileSync(path).toString().split("\n"),
-        confGroup = conf || 'default',
-        confData = getGroup(edgerc, confGroup);
+        confSection = conf || 'default',
+        confData = getSection(edgerc, confSection);
 
     if (!confData) {
-        throw new Error('An error occurred parsing the .edgerc file. You probably specified an invalid group name.');
+        throw new Error('An error occurred parsing the .edgerc file. You probably specified an invalid section name.');
     }
 
     return buildObj(confData);

@@ -1,65 +1,49 @@
 # EdgeGrid for Node.js
 
-This library implements an Authentication handler for requests that provides the [Akamai {OPEN} Edgegrid Authentication scheme](https://developer.akamai.com/stuff/Getting_Started_with_OPEN_APIs/Client_Auth.html). For more infomation visit the [Akamai {OPEN} Developer Community](https://developer.akamai.com/).
-
-@jldb
+This library implements an Authentication handler for the [Akamai OPEN](hhttps://developer.akamai.com/introduction/) EdgeGrid Authentication scheme in Node.js For more infomation visit the [Akamai {OPEN} Developer Portal](https://developer.akamai.com/).
 
 ## Installation
 
 `npm install --save edgegrid`
 
-## Reporting a bug
-
-To report a bug simply create a new GitHub Issue and describe your problem or suggestion. 
-
-Before reporting a bug look around to see if there are any open or closed tickets that cover your issue. And remember the wisdom: pull request > bug report > tweet!
-
-## Contributing
-
-To contribute please feel free to create a fork and submit a pull request. 
-
 ## Example
 
-To use the AkamaiOPEN API you must first register the correct user credentials. You can do that through the LUNA control panel.
+#### Credentials
+To use the Akamai OPEN APIs you must first register and authorize a set of credentials through the [LUNA Control Center](https://control.akamai.com/homeng/view/main). More information on creating and authorizing credentials can be found at [https://developer.akamai.com/introduction/Prov_Creds.html](https://developer.akamai.com/introduction/Prov_Creds.html)
 
-Basic use of the library looks like the following. This will prepare the auth header and then execute it. Remember that requests to the API are signed with a timestamp and therefore should be executed immediately.
+#### .edgerc Authentication
+The preferred method of using the library involves providing the path to an '.edgerc' file which contains the authenticaion credentials which will be used to sign your requests.
+
+>__NOTE__: Requests to the API are signed with a timestamp and therefore should be executed immediately.
 
 ```javascript 
 
 	var EdgeGrid = require('edgegrid');
+	
+	var data = "thisisthedatathatdoesntendyesitgoesonandonmyfriend";
 
-	var client_token = "akab-access-token-xxx-xxxxxxxxxxxxxxxx",
-	  client_secret = "akab-client-token-xxx-xxxxxxxxxxxxxxxx",
-	  access_token = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=",
-	  base_uri = "https://akaa-baseurl-xxxxxxxxxxx-xxxxxxxxxxxxx.luna.akamaiapis.net/";
-
-	var data = "datadatadatadatadatadatadatadata";
-
-	var eg = new EdgeGrid(client_token, client_secret, access_token, base_uri);
+	// Supply the path to your .edgerc file and name
+	// of the section with authorization to the client
+	// you are calling (default section is 'default')
+	var eg = new EdgeGrid({
+	  path: '/path/to/.edgerc',
+	  section: 'section-name'
+	});
 
 	eg.auth({
-	  "path": "billing-usage/v1/products",
-	  "method": "POST",
-	  "headers": {},
-	  "body": data
+	    "path": "/diagnostic-tools/v1/locations",
+	    "method": "GET",
+	    "headers": {},
+	    "body": data
 	});
 
-	eg.send(function (data, response) {
-	  console.log(data);
+	eg.send(function(data, response) {
+	    console.log(data);
 	});
 
 ```
 
-In addition passing the credentials manually as above, you may also authenticate using a `.edgerc` file, specifying its path and the group name (default is 'default'):
-
-```javascript
-var eg = new EdgeGrid({
-  path: '/path/to/.edgerc',
-  group: 'mygroup'
-});
-```
-
-An `.edgerc` file contains groups of credentials and is usually hosted in your home directory:
+An `.edgerc` file contains sections of credentials and is usually hosted in your home directory:
 
 ```plaintext
 [default]
@@ -69,7 +53,7 @@ client_secret = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 access_token = akab-XXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX
 max-body = 131072
 
-[mygroup]
+[section-name]
 host = akaa-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.luna.akamaiapis.net/
 client_token = akab-XXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX
 client_secret = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -77,11 +61,25 @@ access_token = akab-XXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX
 max-body = 131072
 ```
 
+#### Manual Authentication
+In addition supplying credentials via an .edgerc file as above, you may also authenticate manually by hard-coding your credential values and passing them to the EdgeGrid client:
+
+```javascript
+
+	var client_token = "akab-access-token-xxx-xxxxxxxxxxxxxxxx",
+		client_secret = "akab-client-token-xxx-xxxxxxxxxxxxxxxx",
+		access_token = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=",
+		base_uri = "https://akaa-baseurl-xxxxxxxxxxx-xxxxxxxxxxxxx.luna.akamaiapis.net/";
+
+	var eg = new EdgeGrid(client_token, client_secret, access_token, base_uri);
+
+```
+
+#### Chaining
 Calls using the edgegrid client can also be chained as per the following;
 
 ```javascript
 	...
-
 	eg.auth({
 	  "path": "billing-usage/v1/products",
 	  "method": "POST",
@@ -90,17 +88,25 @@ Calls using the edgegrid client can also be chained as per the following;
 	}).send(function (data, response) {
 	  console.log(data);
 	});
+
 ```
+#### Headers and Body Data
+Headers for the request must be supplied in an object as name : value pairs. You do not need to supply form-data headers or content lengths - that will cause authentication headers on the API.
 
-Headers for the request must be supplied as an object as name : value pairs. You do not need to supply form-data headers or content lengths - that will cause authentication headers on the API.
+The request BODY can be provided as either an object or as a POST data formed string.
 
-The request BODY can be provided as either an object or as an already POST data formed string.
+## Reporting a bug
 
+To report a bug simply create a new GitHub Issue and describe your problem or suggestion. 
+
+Before reporting a bug look around to see if there are any open or closed tickets that cover your issue, and check the [Akamai OPEN Developer Community](https://community.akamai.com/community/developer) to see if there are any posts that might address your concern. And remember the wisdom: pull request > bug report > tweet! 
 
 ## Contributors
 
-Thanks to people who have contributed to this.
+A huge thanks to [Jonatahn Bennett](https://github.com/JonathanBennett) for creating and maintaining the original iteration of this project and to the following contributors:
 
 * [@dariusk](https://github.com/dariusk)
 * [@mdb](https://github.com/mdb)
 * [@ktyacke](https://github.com/ktyacke)
+
+__NOTE__: If you'd like to contribute please feel free to create a fork and submit a pull request. 
