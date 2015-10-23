@@ -1,6 +1,6 @@
 {
   "name": "edgegrid",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Authentication handler for the Akamai OPEN EdgeGrid Authentication scheme in Node.js",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,11 @@
     "edgegrid"
   ],
   "author": "Jonathan Bennett",
-  "contributors": ["Darius Kazemi", "Mike Ball", "Kyle Tyacke"],
+  "contributors": [
+    "Darius Kazemi",
+    "Mike Ball",
+    "Kyle Tyacke"
+  ],
   "license": "Apache-2.0",
   "dependencies": {
     "log4js": "^0.6.14",
