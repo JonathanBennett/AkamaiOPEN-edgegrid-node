@@ -1,5 +1,5 @@
 // Copyright 2014 Akamai Technologies, Inc. All Rights Reserved
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -16,7 +16,7 @@ var log4js = require('log4js'),
     logger = log4js.getLogger();
 
 if (!process.env.LOG4JS_CONFIG) {
-    logger.setLevel(log4js.levels.ERROR);
+  logger.setLevel(log4js.levels.ERROR);
 }
 
 module.exports = logger;

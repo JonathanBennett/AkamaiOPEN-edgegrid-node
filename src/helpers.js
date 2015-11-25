@@ -1,5 +1,5 @@
 // Copyright 2014 Akamai Technologies, Inc. All Rights Reserved
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,21 +13,21 @@
 // limitations under the License.
 
 module.exports = {
-    extend: function(a, b) {
-        var key;
+  extend: function(a, b) {
+    var key;
 
-        for (key in b) {
-            if (!a.hasOwnProperty(key)) {
-                a[key] = b[key];
-            }
-        }
-
-        return a;
-    },
-
-    isRedirect: function(statusCode) {
-        return [
-            300, 301, 302, 303, 307
-        ].indexOf(statusCode) !== -1;
+    for (key in b) {
+      if (!a.hasOwnProperty(key)) {
+        a[key] = b[key];
+      }
     }
+
+    return a;
+  },
+
+  isRedirect: function(statusCode) {
+    return [
+      300, 301, 302, 303, 307
+    ].indexOf(statusCode) !== -1;
+  }
 };

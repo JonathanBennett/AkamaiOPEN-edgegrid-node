@@ -1,5 +1,5 @@
 // Copyright 2014 Akamai Technologies, Inc. All Rights Reserved
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,7 +13,6 @@
 // limitations under the License.
 
 var request = require('request'),
-    fs = require('fs'),
     url = require('url'),
     auth = require('./auth'),
     edgerc = require('./edgerc'),
@@ -44,7 +43,6 @@ EdgeGrid.prototype.auth = function(req) {
 };
 
 EdgeGrid.prototype.send = function(callback) {
-
   request(this.request, function(error, response, body) {
     if (error) { throw new Error(error); }
 
@@ -70,7 +68,7 @@ EdgeGrid.prototype._handleRedirect = function(resp, callback) {
 
 EdgeGrid.prototype._setConfigFromObj = function(obj) {
   if (!obj.path) {
-    if (!process.env.EDGEGRID_ENV === 'test') {
+    if (process.env.EDGEGRID_ENV !== 'test') {
       logger.error('No .edgerc path');
     }
 
@@ -97,8 +95,7 @@ function validatedArgs(args) {
   var expected = [
         'client_token', 'client_secret', 'access_token', 'host'
       ],
-      valid = true,
-      i;
+      valid = true;
 
   expected.forEach(function(arg, i) {
     if (!args[i]) {
@@ -115,7 +112,7 @@ function validatedArgs(args) {
 
 EdgeGrid.prototype._setConfigFromObj = function(obj) {
   if (!obj.path) {
-    if (!process.env.EDGEGRID_ENV === 'test') {
+    if (process.env.EDGEGRID_ENV !== 'test') {
       logger.error('No .edgerc path');
     }
 
