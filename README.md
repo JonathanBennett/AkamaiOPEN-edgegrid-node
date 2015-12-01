@@ -20,7 +20,7 @@ The preferred method of using the library involves providing the path to an '.ed
 
 	var EdgeGrid = require('edgegrid');
 	
-	var data = "sampleBodyData";
+	var data = "bodyData";
 
 	// Supply the path to your .edgerc file and name
 	// of the section with authorization to the client
