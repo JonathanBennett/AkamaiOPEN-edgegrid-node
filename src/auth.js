@@ -32,22 +32,16 @@ var base64_hmac_sha256 = function(data, key) {
   return encrypt.digest("base64");
 };
 
-var canonicalize_headers = function(request) {
-  var newHeaders = [];
+var canonicalizeHeaders = function(request) {
+  var formattedHeaders = [],
+      headers = request.headers,
+      key;
 
-  _.each(request.headers, function(value, header) {
-    if (value) {
-      header = header.toLowerCase();
-      if (typeof value === 'string') {
-        value = value.trim();
-        value = value.replace(/\s+/g, ' ');
-      }
+  for (key in headers) {
+    formattedHeaders.push(key.toLowerCase() + ':' + headers[key].trim().replace(/\s+/g, ' '));
+  }
 
-      newHeaders.push(header.toLowerCase() + ':' + value);
-    }
-  });
-
-  return newHeaders.join('\t');
+  return formattedHeaders.join('\t');
 };
 
 var make_content_hash = function(request) {
@@ -97,7 +91,7 @@ var make_data_to_sign = function(request, auth_header) {
     parsed_url.protocol.replace(":", ""),
     parsed_url.host,
     parsed_url.path,
-    canonicalize_headers(request),
+    canonicalizeHeaders(request),
     make_content_hash(request),
     auth_header
   ].join("\t").toString();
