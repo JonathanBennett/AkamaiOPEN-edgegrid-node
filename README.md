@@ -11,38 +11,38 @@ This library implements an Authentication handler for the [Akamai OPEN](hhttps:/
 ## Example
 
 #### Credentials
+
 To use the Akamai OPEN APIs you must first register and authorize a set of credentials through the [LUNA Control Center](https://control.akamai.com/homeng/view/main). More information on creating and authorizing credentials can be found at [https://developer.akamai.com/introduction/Prov_Creds.html](https://developer.akamai.com/introduction/Prov_Creds.html)
 
 #### .edgerc Authentication
+
 The preferred method of using the library involves providing the path to an '.edgerc' file which contains the authenticaion credentials which will be used to sign your requests.
 
->__NOTE__: Requests to the API are signed with a timestamp and therefore should be executed immediately.
+__NOTE__: Requests to the API are signed with a timestamp and therefore should be executed immediately.
 
-```javascript 
+```javascript
+var EdgeGrid = require('edgegrid');
 
-	var EdgeGrid = require('edgegrid');
-	
-	var data = "bodyData";
+var data = 'bodyData';
 
-	// Supply the path to your .edgerc file and name
-	// of the section with authorization to the client
-	// you are calling (default section is 'default')
-	var eg = new EdgeGrid({
-	  path: '/path/to/.edgerc',
-	  section: 'section-name'
-	});
+// Supply the path to your .edgerc file and name
+// of the section with authorization to the client
+// you are calling (default section is 'default')
+var eg = new EdgeGrid({
+  path: '/path/to/.edgerc',
+  section: 'section-name'
+});
 
-	eg.auth({
-	    "path": "/diagnostic-tools/v1/locations",
-	    "method": "GET",
-	    "headers": {},
-	    "body": data
-	});
+eg.auth({
+  path: '/diagnostic-tools/v1/locations',
+  method: 'GET',
+  headers: {},
+  body: data
+});
 
-	eg.send(function(data, response) {
-	    console.log(data);
-	});
-
+eg.send(function(data, response) {
+  console.log(data);
+});
 ```
 
 An `.edgerc` file contains sections of credentials and is usually hosted in your home directory:
@@ -64,44 +64,44 @@ max-body = 131072
 ```
 
 #### Manual Authentication
+
 In addition supplying credentials via an .edgerc file as above, you may also authenticate manually by hard-coding your credential values and passing them to the EdgeGrid client:
 
 ```javascript
+var clientToken = "akab-access-token-xxx-xxxxxxxxxxxxxxxx",
+    clientSecret = "akab-client-token-xxx-xxxxxxxxxxxxxxxx",
+    accessToken = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=",
+    baseUri = "https://akaa-baseurl-xxxxxxxxxxx-xxxxxxxxxxxxx.luna.akamaiapis.net/";
 
-	var client_token = "akab-access-token-xxx-xxxxxxxxxxxxxxxx",
-		client_secret = "akab-client-token-xxx-xxxxxxxxxxxxxxxx",
-		access_token = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=",
-		base_uri = "https://akaa-baseurl-xxxxxxxxxxx-xxxxxxxxxxxxx.luna.akamaiapis.net/";
-
-	var eg = new EdgeGrid(client_token, client_secret, access_token, base_uri);
-
+var eg = new EdgeGrid(clientToken, clientSecret, accessToken, baseUri);
 ```
 
 #### Chaining
+
 Calls using the edgegrid client can also be chained as per the following;
 
 ```javascript
-	...
-	eg.auth({
-	  "path": "billing-usage/v1/products",
-	  "method": "POST",
-	  "headers": {},
-	  "body": data
-	}).send(function (data, response) {
-	  console.log(data);
-	});
-
+...
+eg.auth({
+  path: 'billing-usage/v1/products',
+  method: 'POST',
+  headers: {},
+  body: data
+}).send(function (data, response) {
+  console.log(data);
+});
 ```
 #### Headers and Body Data
+
 Headers for the request must be supplied in an object as name : value pairs. You do not need to supply form-data headers or content lengths - that will cause authentication headers on the API.
 
 The request BODY can be provided as either an object or as a POST data formed string.
 
 ## Reporting a bug
 
-To report a bug simply create a new GitHub Issue and describe your problem or suggestion. 
+To report a bug simply create a new GitHub Issue and describe your problem or suggestion.
 
-Before reporting a bug look around to see if there are any open or closed tickets that cover your issue, and check the [Akamai OPEN Developer Community](https://community.akamai.com/community/developer) to see if there are any posts that might address your concern. And remember the wisdom: pull request > bug report > tweet! 
+Before reporting a bug look around to see if there are any open or closed tickets that cover your issue, and check the [Akamai OPEN Developer Community](https://community.akamai.com/community/developer) to see if there are any posts that might address your concern. And remember the wisdom: pull request > bug report > tweet!
 
 ## Contributors
 
@@ -111,10 +111,11 @@ A huge thanks to [Jonatahn Bennett](https://github.com/JonathanBennett) for crea
 * [@mdb](https://github.com/mdb)
 * [@ktyacke](https://github.com/ktyacke)
 
-__NOTE__: If you'd like to contribute please feel free to create a fork and submit a pull request. 
+__NOTE__: If you'd like to contribute please feel free to create a fork and submit a pull request.
 
 ## License
-Copyright 2015 Akamai Technologies, Inc. All rights reserved. 
+
+Copyright 2015 Akamai Technologies, Inc. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
