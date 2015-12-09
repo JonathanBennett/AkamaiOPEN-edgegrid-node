@@ -42,6 +42,18 @@ module.exports = {
     return encrypt.digest('base64');
   },
 
+  canonicalizeHeaders: function(request) {
+    var formattedHeaders = [],
+        headers = request.headers,
+        key;
+
+    for (key in headers) {
+      formattedHeaders.push(key.toLowerCase() + ':' + headers[key].trim().replace(/\s+/g, ' '));
+    }
+
+    return formattedHeaders.join('\t');
+  },
+
   signingKey: function(timestamp, clientSecret) {
     var key = this.base64HmacSha256(timestamp, clientSecret);
 

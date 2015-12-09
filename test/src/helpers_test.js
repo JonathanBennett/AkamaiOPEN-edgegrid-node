@@ -22,6 +22,17 @@ describe('helpers', function() {
     });
   });
 
+  describe('#canonicalizeHeaders', function() {
+    it('turns the headers into a tab separate string of key/value pairs', function() {
+      assert.equal(helpers.canonicalizeHeaders({
+        headers: {
+          Foo: 'bar',
+          Baz: '  baz\t zoo   '
+        }
+      }), 'foo:bar\tbaz:baz zoo');
+    });
+  });
+
   describe('#signingKey', function() {
     it('returns the proper signing key', function() {
       assert.equal(helpers.signingKey('timestamp', 'secret'), 'ydMIxJIPPypuUya3KZGJ0qCRwkYcKrFn68Nyvpkf1WY=');

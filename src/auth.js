@@ -27,18 +27,6 @@ var createTimestamp = function() {
   return timestamp;
 };
 
-var canonicalizeHeaders = function(request) {
-  var formattedHeaders = [],
-      headers = request.headers,
-      key;
-
-  for (key in headers) {
-    formattedHeaders.push(key.toLowerCase() + ':' + headers[key].trim().replace(/\s+/g, ' '));
-  }
-
-  return formattedHeaders.join('\t');
-};
-
 var make_content_hash = function(request) {
   var max_body = _max_body;
 
@@ -86,7 +74,7 @@ var make_data_to_sign = function(request, auth_header) {
     parsed_url.protocol.replace(":", ""),
     parsed_url.host,
     parsed_url.path,
-    canonicalizeHeaders(request),
+    helpers.canonicalizeHeaders(request),
     make_content_hash(request),
     auth_header
   ].join("\t").toString();
