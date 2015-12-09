@@ -14,7 +14,6 @@
 
 var crypto = require('crypto'),
     moment = require('moment'),
-    _ = require('underscore'),
     url = require('url'),
     logger = require('./logger');
 
@@ -28,13 +27,14 @@ module.exports = {
         preparedBody = request.body || '';
 
     if (typeof preparedBody === 'object') {
-      var postDataNew = '';
+      var postDataNew = '',
+          key;
 
       logger.info('body content is type object, transforming to post data');
 
-      _.each(preparedBody, function(value, index) {
-        postDataNew += index + '=' + encodeURIComponent(JSON.stringify(value)) + '&';
-      });
+      for (key in preparedBody) {
+        postDataNew += key + '=' + encodeURIComponent(JSON.stringify(preparedBody[key])) + '&';
+      }
 
       preparedBody = postDataNew;
       request.body = preparedBody;
