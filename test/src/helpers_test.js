@@ -16,6 +16,63 @@ var assert = require('assert'),
     helpers = require('../../src/helpers');
 
 describe('helpers', function() {
+  describe('#base64Sha256', function() {
+    it('returns a base 64 encoded Sha256 of the string it is passed', function () {
+      assert.equal(helpers.base64Sha256('foo'), 'LCa0a2j/xo/5m0U8HTBBNBNCLXBkg7+g+YpeiGJm564=');
+    });
+  });
+
+  describe('#base64HmacSha256', function() {
+    it('returns a base 64 encoded Hmac Sha256 of the message and key it is passed', function () {
+      assert.equal(helpers.base64HmacSha256('message', 'secret'), 'i19IcCmVwVmMVz2x4hhmqbgl1KeU0WnXBgoDYFeWNgs=');
+    });
+  });
+
+  describe('#canonicalizeHeaders', function() {
+    it('turns the headers into a tab separate string of key/value pairs', function() {
+      assert.equal(helpers.canonicalizeHeaders({
+        headers: {
+          Foo: 'bar',
+          Baz: '  baz\t zoo   '
+        }
+      }), 'foo:bar\tbaz:baz zoo');
+    });
+  });
+
+  describe('#contentHash', function() {
+    describe('when the request is not a POST', function() {
+      it('returns an empty string', function () {
+        assert.equal(helpers.contentHash({
+          method: 'GET'
+        }), '');
+      });
+    });
+
+    describe('when the request is a POST', function() {
+      it('returns a base64 encoded sha256 of the body', function () {
+        assert.equal(helpers.contentHash({
+          body: 'foo',
+          method: 'POST'
+        }), 'LCa0a2j/xo/5m0U8HTBBNBNCLXBkg7+g+YpeiGJm564=');
+      });
+    });
+  });
+
+  describe('#dataToSign', function() {
+    it('properly formats the request data to sign', function() {
+      assert.equal(helpers.dataToSign({
+        method: 'get',
+        url: 'http://example.com/foo'
+      }, 'authHeader'), 'GET\thttp\texample.com\t/foo\t\t\tauthHeader');
+    });
+  });
+
+  describe('#signingKey', function() {
+    it('returns the proper signing key', function() {
+      assert.equal(helpers.signingKey('timestamp', 'secret'), 'ydMIxJIPPypuUya3KZGJ0qCRwkYcKrFn68Nyvpkf1WY=');
+    });
+  });
+
   describe('#isRedirect', function() {
     describe('when it is passed a status code indicating a redirect', function() {
       it('returns true when it is passed a 300', function() {

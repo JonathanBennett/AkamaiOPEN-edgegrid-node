@@ -39,7 +39,7 @@ EdgeGrid.prototype.auth = function(req) {
     body: {}
   });
 
-  this.request = auth.generate_auth(req, this.config.client_token, this.config.client_secret, this.config.access_token, this.config.host);
+  this.request = auth.generateAuth(req, this.config.client_token, this.config.client_secret, this.config.access_token, this.config.host);
 };
 
 EdgeGrid.prototype.send = function(callback) {
