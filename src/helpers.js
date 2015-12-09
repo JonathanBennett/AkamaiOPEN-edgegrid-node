@@ -34,6 +34,12 @@ module.exports = {
     ].indexOf(statusCode) !== -1;
   },
 
+  base64Sha256: function(data) {
+    var shasum = crypto.createHash('sha256').update(data);
+
+    return shasum.digest('base64');
+  },
+
   base64HmacSha256: function(data, key) {
     var encrypt = crypto.createHmac('sha256', key);
 

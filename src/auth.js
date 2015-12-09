@@ -14,7 +14,6 @@
 
 var uuid = require('node-uuid'),
     moment = require('moment'),
-    crypto = require('crypto'),
     _ = require('underscore'),
     url = require('url'),
     helpers = require('./helpers'),
@@ -58,9 +57,7 @@ var make_content_hash = function(request) {
 
     logger.debug("PREPARED BODY", prepared_body);
 
-    var shasum = crypto.createHash('sha256');
-    shasum.update(prepared_body);
-    content_hash = shasum.digest("base64");
+    content_hash = helpers.base64Sha256(prepared_body);
     logger.info("Content hash is \"" + content_hash + "\"");
   }
 
