@@ -16,6 +16,12 @@ var assert = require('assert'),
     helpers = require('../../src/helpers');
 
 describe('helpers', function() {
+  describe('#base64HmacSha256', function() {
+    it('returns a base 64 encoded Hmac Sha256 of the message and key it is passed', function () {
+      assert.equal(helpers.base64HmacSha256('message', 'secret'), 'i19IcCmVwVmMVz2x4hhmqbgl1KeU0WnXBgoDYFeWNgs=');
+    });
+  });
+
   describe('#isRedirect', function() {
     describe('when it is passed a status code indicating a redirect', function() {
       it('returns true when it is passed a 300', function() {

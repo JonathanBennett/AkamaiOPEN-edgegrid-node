@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+var crypto = require('crypto');
+
 module.exports = {
   extend: function(a, b) {
     var key;
@@ -29,5 +31,13 @@ module.exports = {
     return [
       300, 301, 302, 303, 307
     ].indexOf(statusCode) !== -1;
+  },
+
+  base64HmacSha256: function(data, key) {
+    var encrypt = crypto.createHmac('sha256', key);
+
+    encrypt.update(data);
+
+    return encrypt.digest('base64');
   }
 };
