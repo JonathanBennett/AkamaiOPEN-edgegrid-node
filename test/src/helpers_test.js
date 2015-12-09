@@ -39,6 +39,34 @@ describe('helpers', function() {
     });
   });
 
+  describe('#contentHash', function() {
+    describe('when the request is not a POST', function() {
+      it('returns an empty string', function () {
+        assert.equal(helpers.contentHash({
+          method: 'GET'
+        }), '');
+      });
+    });
+
+    describe('when the request is a POST', function() {
+      it('returns a base64 encoded sha256 of the body', function () {
+        assert.equal(helpers.contentHash({
+          body: 'foo',
+          method: 'POST'
+        }), 'LCa0a2j/xo/5m0U8HTBBNBNCLXBkg7+g+YpeiGJm564=');
+      });
+    });
+  });
+
+  describe('#dataToSign', function() {
+    it('properly formats the request data to sign', function() {
+      assert.equal(helpers.dataToSign({
+        method: 'get',
+        url: 'http://example.com/foo'
+      }, 'authHeader'), 'GET\thttp\texample.com\t/foo\t\t\tauthHeader');
+    });
+  });
+
   describe('#signingKey', function() {
     it('returns the proper signing key', function() {
       assert.equal(helpers.signingKey('timestamp', 'secret'), 'ydMIxJIPPypuUya3KZGJ0qCRwkYcKrFn68Nyvpkf1WY=');

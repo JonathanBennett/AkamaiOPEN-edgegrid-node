@@ -14,11 +14,68 @@
 
 var crypto = require('crypto'),
     moment = require('moment'),
+    _ = require('underscore'),
+    url = require('url'),
     logger = require('./logger');
 
 module.exports = {
   createTimestamp: function() {
     return moment().utc().format('YYYYMMDDTHH:mm:ss+0000');
+  },
+
+  contentHash: function(request, maxBody) {
+    var contentHash = '',
+        preparedBody = request.body || '';
+
+    if (typeof preparedBody === 'object') {
+      var postDataNew = '';
+
+      logger.info('body content is type object, transforming to post data');
+
+      _.each(preparedBody, function(value, index) {
+        postDataNew += index + '=' + encodeURIComponent(JSON.stringify(value)) + '&';
+      });
+
+      preparedBody = postDataNew;
+      request.body = preparedBody;
+    }
+
+    logger.info('body is \"' + preparedBody + '\"');
+    logger.debug('PREPARED BODY LENGTH', preparedBody.length);
+
+    if (request.method === 'POST' && preparedBody.length > 0) {
+      logger.info('Signing content: \"' + preparedBody + '\"');
+
+      if (preparedBody.length > maxBody) {
+        logger.warn('Data length (' + preparedBody.length + ') is larger than maximum ' + maxBody);
+        preparedBody = preparedBody.substring(0, maxBody);
+        logger.info('Body truncated. New value \"' + preparedBody + '\"');
+      }
+
+      logger.debug('PREPARED BODY', preparedBody);
+
+      contentHash = this.base64Sha256(preparedBody);
+      logger.info('Content hash is \"' + contentHash + '\"');
+    }
+
+    return contentHash;
+  },
+
+  dataToSign: function(request, authHeader, maxBody) {
+    var parsedUrl = url.parse(request.url, true),
+        dataToSign = [
+          request.method.toUpperCase(),
+          parsedUrl.protocol.replace(":", ""),
+          parsedUrl.host,
+          parsedUrl.path,
+          this.canonicalizeHeaders(request),
+          this.contentHash(request, maxBody),
+          authHeader
+        ].join('\t').toString();
+
+    logger.info('data to sign: "' + dataToSign + '" \n');
+
+    return dataToSign;
   },
 
   extend: function(a, b) {
