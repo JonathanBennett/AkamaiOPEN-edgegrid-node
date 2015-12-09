@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-var crypto = require('crypto');
+var crypto = require('crypto'),
+    logger = require('./logger');
 
 module.exports = {
   extend: function(a, b) {
@@ -39,5 +40,13 @@ module.exports = {
     encrypt.update(data);
 
     return encrypt.digest('base64');
+  },
+
+  signingKey: function(timestamp, clientSecret) {
+    var key = this.base64HmacSha256(timestamp, clientSecret);
+
+    logger.info('Signing key: ' + key + '\n');
+
+    return key;
   }
 };

@@ -22,6 +22,12 @@ describe('helpers', function() {
     });
   });
 
+  describe('#signingKey', function() {
+    it('returns the proper signing key', function() {
+      assert.equal(helpers.signingKey('timestamp', 'secret'), 'ydMIxJIPPypuUya3KZGJ0qCRwkYcKrFn68Nyvpkf1WY=');
+    });
+  });
+
   describe('#isRedirect', function() {
     describe('when it is passed a status code indicating a redirect', function() {
       it('returns true when it is passed a 300', function() {
