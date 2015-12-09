@@ -13,9 +13,14 @@
 // limitations under the License.
 
 var crypto = require('crypto'),
+    moment = require('moment'),
     logger = require('./logger');
 
 module.exports = {
+  createTimestamp: function() {
+    return moment().utc().format('YYYYMMDDTHH:mm:ss+0000');
+  },
+
   extend: function(a, b) {
     var key;
 

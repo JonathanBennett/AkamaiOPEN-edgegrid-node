@@ -13,18 +13,12 @@
 // limitations under the License.
 
 var uuid = require('node-uuid'),
-    moment = require('moment'),
     _ = require('underscore'),
     url = require('url'),
     helpers = require('./helpers'),
     logger = require('./logger');
 
 var _max_body = null;
-
-var createTimestamp = function() {
-  var timestamp = moment().utc().format('YYYYMMDDTHH:mm:ss+0000');
-  return timestamp;
-};
 
 var make_content_hash = function(request) {
   var max_body = _max_body;
@@ -114,7 +108,7 @@ module.exports = {
     _max_body = max_body || 2048;
 
     guid = guid || uuid.v4();
-    timestamp = timestamp || createTimestamp();
+    timestamp = timestamp || helpers.createTimestamp();
 
     if (!request.hasOwnProperty("headers")) {
       request.headers = {};
