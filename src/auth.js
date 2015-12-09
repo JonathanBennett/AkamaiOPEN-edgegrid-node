@@ -13,7 +13,6 @@
 // limitations under the License.
 
 var uuid = require('node-uuid'),
-    _ = require('underscore'),
     helpers = require('./helpers'),
     logger = require('./logger');
 
@@ -26,11 +25,12 @@ function makeAuthHeader(request, clientToken, accessToken, clientSecret, timesta
     },
     joinedPairs = '',
     authHeader,
-    signedAuthHeader;
+    signedAuthHeader,
+    key;
 
-  _.each(keyValuePairs, function(value, key) {
-    joinedPairs += key + '=' + value + ';';
-  });
+  for (key in keyValuePairs) {
+    joinedPairs += key + '=' + keyValuePairs[key] + ';';
+  }
 
   authHeader = 'EG1-HMAC-SHA256 ' + joinedPairs;
 
