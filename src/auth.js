@@ -19,33 +19,31 @@ var uuid = require('node-uuid'),
 
 var _max_body = null;
 
-var sign_request = function(request, timestamp, client_secret, auth_header) {
-  return helpers.base64HmacSha256(helpers.dataToSign(request, auth_header, _max_body), helpers.signingKey(timestamp, client_secret));
-};
+function makeAuthHeader(request, clientToken, accessToken, clientSecret, timestamp, nonce) {
+  var keyValuePairs = {
+      client_token: clientToken,
+      access_token: accessToken,
+      timestamp: timestamp,
+      nonce: nonce
+    },
+    joinedPairs = '',
+    authHeader,
+    signedAuthHeader;
 
-var make_auth_header = function(request, client_token, access_token, client_secret, timestamp, nonce) {
-  var key_value_pairs = {
-    "client_token": client_token,
-    "access_token": access_token,
-    "timestamp": timestamp,
-    "nonce": nonce
-  };
-
-  var joined_pairs = "";
-  _.each(key_value_pairs, function(value, key) {
-    joined_pairs += key + "=" + value + ";";
+  _.each(keyValuePairs, function(value, key) {
+    joinedPairs += key + '=' + value + ';';
   });
 
-  var auth_header = "EG1-HMAC-SHA256 " + joined_pairs;
+  authHeader = 'EG1-HMAC-SHA256 ' + joinedPairs;
 
-  logger.info("Unsigned authorization header: " + auth_header + "\n");
+  logger.info('Unsigned authorization header: ' + authHeader + '\n');
 
-  var signed_auth_header = auth_header + "signature=" + sign_request(request, timestamp, client_secret, auth_header);
+  signedAuthHeader = authHeader + 'signature=' + helpers.signRequest(request, timestamp, clientSecret, authHeader, _max_body);
 
-  logger.info("Signed authorization header: " + signed_auth_header + "\n");
+  logger.info('Signed authorization header: ' + signedAuthHeader + '\n');
 
-  return signed_auth_header;
-};
+  return signedAuthHeader;
+}
 
 module.exports = {
   generate_auth: function(request, client_token, client_secret, access_token, host, max_body, guid, timestamp) {
@@ -58,7 +56,7 @@ module.exports = {
       request.headers = {};
     }
     request.url = host + request.path;
-    request.headers.Authorization = make_auth_header(request, client_token, access_token, client_secret, timestamp, guid);
+    request.headers.Authorization = makeAuthHeader(request, client_token, access_token, client_secret, timestamp, guid);
     return request;
   }
 };
