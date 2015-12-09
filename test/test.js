@@ -22,7 +22,7 @@ describe('Signature Generation', function() {
         "path": "",
         "method": "GET"
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
+      test_auth = auth.generateAuth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -34,7 +34,7 @@ describe('Signature Generation', function() {
         "path": "testapi/v1/t1?p1=1&p2=2",
         "method": "GET"
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
+      test_auth = auth.generateAuth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -48,7 +48,7 @@ describe('Signature Generation', function() {
         "method": "POST",
         "body": data
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
+      test_auth = auth.generateAuth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -64,7 +64,7 @@ describe('Signature Generation', function() {
         "method": "POST",
         "body": data
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
+      test_auth = auth.generateAuth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -79,7 +79,7 @@ describe('Signature Generation', function() {
         "method": "POST",
         "body": data
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
+      test_auth = auth.generateAuth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -94,7 +94,7 @@ describe('Signature Generation', function() {
         "method": "POST",
         "body": data
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
+      test_auth = auth.generateAuth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
 
     });
@@ -112,7 +112,7 @@ describe('Signature Generation', function() {
         "method": "GET",
         "headers": headers
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
+      test_auth = auth.generateAuth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -129,7 +129,7 @@ describe('Signature Generation', function() {
         "method": "GET",
         "headers": headers
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
+      test_auth = auth.generateAuth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -146,7 +146,7 @@ describe('Signature Generation', function() {
         "method": "GET",
         "headers": headers
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
+      test_auth = auth.generateAuth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -161,7 +161,7 @@ describe('Signature Generation', function() {
         "method": "PUT",
         "body": data
       };
-      test_auth = auth.generate_auth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
+      test_auth = auth.generateAuth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });

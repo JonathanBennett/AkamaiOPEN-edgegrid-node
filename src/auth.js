@@ -17,9 +17,7 @@ var uuid = require('node-uuid'),
     helpers = require('./helpers'),
     logger = require('./logger');
 
-var _max_body = null;
-
-function makeAuthHeader(request, clientToken, accessToken, clientSecret, timestamp, nonce) {
+function makeAuthHeader(request, clientToken, accessToken, clientSecret, timestamp, nonce, maxBody) {
   var keyValuePairs = {
       client_token: clientToken,
       access_token: accessToken,
@@ -38,7 +36,7 @@ function makeAuthHeader(request, clientToken, accessToken, clientSecret, timesta
 
   logger.info('Unsigned authorization header: ' + authHeader + '\n');
 
-  signedAuthHeader = authHeader + 'signature=' + helpers.signRequest(request, timestamp, clientSecret, authHeader, _max_body);
+  signedAuthHeader = authHeader + 'signature=' + helpers.signRequest(request, timestamp, clientSecret, authHeader, maxBody);
 
   logger.info('Signed authorization header: ' + signedAuthHeader + '\n');
 
@@ -46,17 +44,18 @@ function makeAuthHeader(request, clientToken, accessToken, clientSecret, timesta
 }
 
 module.exports = {
-  generate_auth: function(request, client_token, client_secret, access_token, host, max_body, guid, timestamp) {
-    _max_body = max_body || 2048;
-
+  generateAuth: function(request, clientToken, clientSecret, accessToken, host, maxBody, guid, timestamp) {
+    maxBody = maxBody || 2048;
     guid = guid || uuid.v4();
     timestamp = timestamp || helpers.createTimestamp();
 
-    if (!request.hasOwnProperty("headers")) {
+    if (!request.hasOwnProperty('headers')) {
       request.headers = {};
     }
+
     request.url = host + request.path;
-    request.headers.Authorization = makeAuthHeader(request, client_token, access_token, client_secret, timestamp, guid);
+    request.headers.Authorization = makeAuthHeader(request, clientToken, accessToken, clientSecret, timestamp, guid, maxBody);
+
     return request;
   }
 };
