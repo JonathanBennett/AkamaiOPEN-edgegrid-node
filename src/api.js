@@ -13,17 +13,19 @@
 // limitations under the License.
 
 var request = require('request'),
-    url = require('url'),
-    auth = require('./auth'),
-    edgerc = require('./edgerc'),
-    helpers = require('./helpers'),
-    logger = require('./logger');
+  url = require('url'),
+  auth = require('./auth'),
+  edgerc = require('./edgerc'),
+  helpers = require('./helpers'),
+  logger = require('./logger');
 
-var EdgeGrid = function(client_token, client_secret, access_token, host) {
+var EdgeGrid = function(client_token, client_secret, access_token, host, debug) {
   // accepting an object containing a path to .edgerc and a config section
   if (typeof arguments[0] === 'object') {
+    request.debug = arguments[0].debug ? true : false;
     this._setConfigFromObj(arguments[0]);
   } else {
+    request.debug = debug ? true : false;
     this._setConfigFromStrings(client_token, client_secret, access_token, host);
   }
 };
@@ -44,7 +46,9 @@ EdgeGrid.prototype.auth = function(req) {
 
 EdgeGrid.prototype.send = function(callback) {
   request(this.request, function(error, response, body) {
-    if (error) { throw new Error(error); }
+    if (error) {
+      throw new Error(error);
+    }
 
     if (helpers.isRedirect(response.statusCode)) {
       this._handleRedirect(response, callback);
@@ -93,13 +97,13 @@ EdgeGrid.prototype._setConfigFromStrings = function(client_token, client_secret,
 
 function validatedArgs(args) {
   var expected = [
-        'client_token', 'client_secret', 'access_token', 'host'
-      ],
-      valid = true;
+      'client_token', 'client_secret', 'access_token', 'host'
+    ],
+    valid = true;
 
   expected.forEach(function(arg, i) {
     if (!args[i]) {
-      if (process.env.EDGEGRID_ENV !== 'test' ) {
+      if (process.env.EDGEGRID_ENV !== 'test') {
         logger.error('No defined ' + arg);
       }
 
