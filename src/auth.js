@@ -13,8 +13,8 @@
 // limitations under the License.
 
 var uuid = require('node-uuid'),
-    helpers = require('./helpers'),
-    logger = require('./logger');
+  helpers = require('./helpers'),
+  logger = require('./logger');
 
 function makeAuthHeader(request, clientToken, accessToken, clientSecret, timestamp, nonce, maxBody) {
   var keyValuePairs = {
@@ -43,6 +43,21 @@ function makeAuthHeader(request, clientToken, accessToken, clientSecret, timesta
   return signedAuthHeader;
 }
 
+function makeURL(host, path, queryStringObj) {
+  var url = host + path;
+
+  // Append query string params to end of url
+  if (queryStringObj) {
+    url += "?";
+
+    for (var key in queryStringObj) {
+      url += (key + "=" + queryStringObj[key]);
+    }
+  }
+
+  return url;
+}
+
 module.exports = {
   generateAuth: function(request, clientToken, clientSecret, accessToken, host, maxBody, guid, timestamp) {
     maxBody = maxBody || 2048;
@@ -53,7 +68,7 @@ module.exports = {
       request.headers = {};
     }
 
-    request.url = host + request.path;
+    request.url = makeURL(host, request.path, request.qs);
     request.headers.Authorization = makeAuthHeader(request, clientToken, accessToken, clientSecret, timestamp, guid, maxBody);
 
     return request;
