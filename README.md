@@ -97,6 +97,30 @@ Headers for the request must be supplied in an object as name : value pairs. You
 
 The request BODY can be provided as either an object or as a POST data formed string.
 
+#### Query String Pameters
+
+Query string parameters must be supplied in an Object as name : value pairs and 
+passed to the `auth` method under the `qs` property.
+
+```javascript
+eg.auth({
+  path: 'billing-usage/v1/dig',
+  method: 'GET',
+  headers: {},
+  body: {},
+  qs: {
+    "hostname": "developer.akamai.com.",
+    "queryType": "A",
+    "location": location
+  }}
+}).send(function (data, response) {
+  console.log(data);
+});
+
+// Produces request url similar to:
+// http://hostaddress.luna.akamaiapis.net/diagnostic-tools/v1/dig?hostname=developer.akamai.com&queryType=A&location=location
+```
+
 ## Reporting a bug
 
 To report a bug simply create a new GitHub Issue and describe your problem or suggestion.
