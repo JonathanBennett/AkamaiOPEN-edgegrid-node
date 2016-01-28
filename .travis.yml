@@ -1,5 +1,5 @@
 language: node_js
-
-# Build using the latest stable version of Node
 node_js:
-  - "stable"
+  - "node"
+before_script:
+script: npm test
