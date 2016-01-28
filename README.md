@@ -111,7 +111,7 @@ eg.auth({
   qs: {
     "hostname": "developer.akamai.com.",
     "queryType": "A",
-    "location": location
+    "location": "Florida, United States"
   }}
 }).send(function (data, response) {
   console.log(data);
