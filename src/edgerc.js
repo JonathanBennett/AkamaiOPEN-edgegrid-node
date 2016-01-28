@@ -16,8 +16,8 @@ var fs = require('fs');
 
 function getSection(lines, sectionName) {
   var match = /\[(.*)\]/,
-      lineMatch,
-      section;
+    lineMatch,
+    section;
 
   lines.forEach(function(line, i) {
     lineMatch = line.match(match);
@@ -42,14 +42,17 @@ function validatedConfig(config) {
 
 function buildObj(configs) {
   var result = {},
-      index,
-      key,
-      val;
+    index,
+    key,
+    val;
 
   configs.forEach(function(config) {
     index = config.indexOf('=');
     key = config.substr(0, index);
     val = config.substr(index + 1, config.length - index - 1);
+
+    // Remove trailing slash as if often found in the host property
+    val = val.replace(/\/$/, '');
 
     result[key.trim()] = val.trim();
   });
@@ -59,8 +62,8 @@ function buildObj(configs) {
 
 module.exports = function(path, conf) {
   var edgerc = fs.readFileSync(path).toString().split('\n'),
-      confSection = conf || 'default',
-      confData = getSection(edgerc, confSection);
+    confSection = conf || 'default',
+    confData = getSection(edgerc, confSection);
 
   if (!confData) {
     throw new Error('An error occurred parsing the .edgerc file. You probably specified an invalid section name.');
