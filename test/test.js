@@ -5,11 +5,11 @@ var assert = require("assert");
 var auth = require('../src/auth.js');
 
 var base_url = "https://akaa-baseurl-xxxxxxxxxxx-xxxxxxxxxxxxx.luna.akamaiapis.net/",
-    access_token = "akab-access-token-xxx-xxxxxxxxxxxxxxxx",
-    client_token = "akab-client-token-xxx-xxxxxxxxxxxxxxxx",
-    client_secret = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=",
-    nonce = "nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-    timestamp = "20140321T19:34:21+0000";
+  access_token = "akab-access-token-xxx-xxxxxxxxxxxxxxxx",
+  client_token = "akab-client-token-xxx-xxxxxxxxxxxxxxxx",
+  client_secret = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=",
+  nonce = "nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+  timestamp = "20140321T19:34:21+0000";
 
 var test_auth = null;
 
@@ -27,17 +27,34 @@ describe('Signature Generation', function() {
     });
   });
   describe('get with querystring', function() {
-  it('should return the expected string when the signing request is run.', function() {
-    var expected_header = "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=hKDH1UlnQySSHjvIcZpDMbQHihTQ0XyVAKZaApabdeA=";
-    var request = {
-      //"url": "https://akaa-kax6r2oleojomqr3-q2i5ed3v35xfwe3j.luna.akamaiapis.net/billing-usage/v1/contractusagedata/contract/C-6JGLXF/6/2014",
-      "path": "testapi/v1/t1?p1=1&p2=2",
-      "method": "GET"
-    };
-    test_auth = auth.generateAuth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
-    assert.equal(test_auth.headers.Authorization, expected_header);
+    it('should return the expected string when the signing request is run.', function() {
+      var expected_header = "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=hKDH1UlnQySSHjvIcZpDMbQHihTQ0XyVAKZaApabdeA=";
+      var request = {
+        //"url": "https://akaa-kax6r2oleojomqr3-q2i5ed3v35xfwe3j.luna.akamaiapis.net/billing-usage/v1/contractusagedata/contract/C-6JGLXF/6/2014",
+        "path": "testapi/v1/t1?p1=1&p2=2",
+        "method": "GET"
+      };
+      test_auth = auth.generateAuth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
+      assert.equal(test_auth.headers.Authorization, expected_header);
+    });
   });
-});
+
+  describe('get with querystring Object', function() {
+    it('should return the expected string when the signing request is run.', function() {
+      var expected_header = "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=hKDH1UlnQySSHjvIcZpDMbQHihTQ0XyVAKZaApabdeA=";
+      var request = {
+        //"url": "https://akaa-kax6r2oleojomqr3-q2i5ed3v35xfwe3j.luna.akamaiapis.net/billing-usage/v1/contractusagedata/contract/C-6JGLXF/6/2014",
+        "path": "testapi/v1/t1",
+        "method": "GET",
+        "qs": {
+          "p1": 1,
+          "p2": 2
+        }
+      };
+      test_auth = auth.generateAuth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
+      assert.equal(test_auth.headers.Authorization, expected_header);
+    });
+  });
 
   describe('POST inside limit', function() {
     it('should return the expected string when the signing request is run.', function() {

@@ -14,7 +14,8 @@
 
 var uuid = require('node-uuid'),
   helpers = require('./helpers'),
-  logger = require('./logger');
+  logger = require('./logger'),
+  url = require('url');
 
 function makeAuthHeader(request, clientToken, accessToken, clientSecret, timestamp, nonce, maxBody) {
   var keyValuePairs = {
@@ -44,18 +45,12 @@ function makeAuthHeader(request, clientToken, accessToken, clientSecret, timesta
 }
 
 function makeURL(host, path, queryStringObj) {
-  var url = host + path;
+  var parsed = url.parse(host + path, true);
+  if (queryStringObj) parsed.query = queryStringObj;
 
-  // Append query string params to end of url
-  if (queryStringObj) {
-    url += "?";
-
-    for (var key in queryStringObj) {
-      url += (key + "=" + queryStringObj[key]);
-    }
-  }
-
-  return url;
+  console.log("Parsed: ", parsed);
+  console.log("Format: ", url.format(parsed));
+  return url.format(parsed);
 }
 
 module.exports = {
