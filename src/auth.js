@@ -48,9 +48,6 @@ function makeURL(host, path, queryStringObj) {
   var parsed = url.parse(host + path, true);
   if (queryStringObj) parsed.query = queryStringObj;
 
-  // console.log("Parsed: ", parsed);
-  // console.log("Format: ", url.format(parsed));
-
   return url.format(parsed);
 }
 
