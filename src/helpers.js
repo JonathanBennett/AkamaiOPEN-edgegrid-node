@@ -13,9 +13,9 @@
 // limitations under the License.
 
 var crypto = require('crypto'),
-    moment = require('moment'),
-    url = require('url'),
-    logger = require('./logger');
+  moment = require('moment'),
+  url = require('url'),
+  logger = require('./logger');
 
 module.exports = {
   createTimestamp: function() {
@@ -24,28 +24,34 @@ module.exports = {
 
   contentHash: function(request, maxBody) {
     var contentHash = '',
-        preparedBody = request.body || '';
+      preparedBody = request.body || '';
+
+    console.log("Preparedbody: ", preparedBody);
 
     if (typeof preparedBody === 'object') {
       var postDataNew = '',
-          key;
+        key;
 
-      logger.info('body content is type object, transforming to post data');
+      logger.info('Body content is type Object, transforming to POST data');
 
       for (key in preparedBody) {
         postDataNew += key + '=' + encodeURIComponent(JSON.stringify(preparedBody[key])) + '&';
       }
 
+      // Strip trailing ampersand
+      postDataNew = postDataNew.replace(/&+$/, "");
+
       preparedBody = postDataNew;
-      request.body = preparedBody;
+      request.body = preparedBody; // Is this required or being used?
     }
 
-    logger.info('body is \"' + preparedBody + '\"');
+    logger.info('Body is \"' + preparedBody + '\"');
     logger.debug('PREPARED BODY LENGTH', preparedBody.length);
 
     if (request.method === 'POST' && preparedBody.length > 0) {
       logger.info('Signing content: \"' + preparedBody + '\"');
 
+      // If body data is too large, cut down to max-body size
       if (preparedBody.length > maxBody) {
         logger.warn('Data length (' + preparedBody.length + ') is larger than maximum ' + maxBody);
         preparedBody = preparedBody.substring(0, maxBody);
@@ -63,17 +69,19 @@ module.exports = {
 
   dataToSign: function(request, authHeader, maxBody) {
     var parsedUrl = url.parse(request.url, true),
-        dataToSign = [
-          request.method.toUpperCase(),
-          parsedUrl.protocol.replace(":", ""),
-          parsedUrl.host,
-          parsedUrl.path,
-          this.canonicalizeHeaders(request),
-          this.contentHash(request, maxBody),
-          authHeader
-        ].join('\t').toString();
+      dataToSign = [
+        request.method.toUpperCase(),
+        parsedUrl.protocol.replace(":", ""),
+        parsedUrl.host,
+        parsedUrl.path,
+        this.canonicalizeHeaders(request.dataToSign),
+        this.contentHash(request, maxBody),
+        authHeader
+      ];
 
-    logger.info('data to sign: "' + dataToSign + '" \n');
+    dataToSign = dataToSign.join('\t').toString();
+
+    logger.info('Data to sign: "' + dataToSign + '" \n');
 
     return dataToSign;
   },
@@ -110,14 +118,20 @@ module.exports = {
     return encrypt.digest('base64');
   },
 
-  canonicalizeHeaders: function(request) {
+  /**
+   * Creates a String containing a tab delimited set of headers.
+   * @param  {Object} headers Object containing the headers to add to the set.
+   * @return {String}         String containing a tab delimited set of headers.
+   */
+  canonicalizeHeaders: function(headers) {
     var formattedHeaders = [],
-        headers = request.headers,
-        key;
+      key;
 
     for (key in headers) {
       formattedHeaders.push(key.toLowerCase() + ':' + headers[key].trim().replace(/\s+/g, ' '));
     }
+
+    console.log("canonicalizeHeaders: ", formattedHeaders);
 
     return formattedHeaders.join('\t');
   },
