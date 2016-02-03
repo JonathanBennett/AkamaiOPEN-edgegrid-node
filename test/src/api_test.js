@@ -195,9 +195,9 @@ describe('Api', function() {
         assert.equal(this.api.request.method, 'POST');
       });
 
-      it('uses the specified body parsed as a key/value pair string', function() {
+      it('uses the specified body parsed as a JSON string', function() {
         console.log("BODY: ", this.api.request.body);
-        assert.equal(this.api.request.body, 'foo=%22bar%22');
+        assert.equal(this.api.request.body, '{"foo":"bar"}');
       });
 
       it('extends the default request options with any others specified', function() {
