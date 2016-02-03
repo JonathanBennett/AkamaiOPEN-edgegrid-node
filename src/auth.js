@@ -48,15 +48,12 @@ function makeURL(host, path, queryStringObj) {
   var parsed = url.parse(host + path, true);
   if (queryStringObj) parsed.query = queryStringObj;
 
-  // console.log("Parsed: ", parsed);
-  // console.log("Format: ", url.format(parsed));
-
   return url.format(parsed);
 }
 
 module.exports = {
   generateAuth: function(request, clientToken, clientSecret, accessToken, host, maxBody, guid, timestamp) {
-    maxBody = maxBody || 2048;
+    maxBody = maxBody || 131072;
     guid = guid || uuid.v4();
     timestamp = timestamp || helpers.createTimestamp();
 

@@ -13,9 +13,9 @@
 // limitations under the License.
 
 var assert = require('assert'),
-    nock = require('nock'),
-    path = require('path'),
-    Api = require('../../src/api');
+  nock = require('nock'),
+  path = require('path'),
+  Api = require('../../src/api');
 
 describe('Api', function() {
   beforeEach(function() {
@@ -191,12 +191,13 @@ describe('Api', function() {
         assert.equal(this.api.request.headers['Content-Type'], 'application/json');
       });
 
-      it('uses the specified GET method', function() {
+      it('uses the specified POST method', function() {
         assert.equal(this.api.request.method, 'POST');
       });
 
       it('uses the specified body parsed as a key/value pair string', function() {
-        assert.equal(this.api.request.body, 'foo=%22bar%22&');
+        console.log("BODY: ", this.api.request.body);
+        assert.equal(this.api.request.body, 'foo=%22bar%22');
       });
 
       it('extends the default request options with any others specified', function() {
@@ -256,7 +257,7 @@ describe('Api', function() {
           .reply(302, undefined, {
             'Location': 'https://base.com/bar'
           })
-        .get('/bar')
+          .get('/bar')
           .reply(200, {
             bar: 'bim'
           });

@@ -30,6 +30,14 @@ var EdgeGrid = function(client_token, client_secret, access_token, host, debug) 
   }
 };
 
+/**
+ * Builds the request using the properties of the local config Object.
+ * 
+ * @param  {Object} req The request Object. Can optionally contain a
+ *                      'headersToSign' property: An ordered list header names 
+ *                      that will be included in the signature. This will be 
+ *                      provided by specific APIs.
+ */
 EdgeGrid.prototype.auth = function(req) {
   req = helpers.extend(req, {
     url: this.config.host + req.path,
@@ -41,7 +49,13 @@ EdgeGrid.prototype.auth = function(req) {
     body: {}
   });
 
-  this.request = auth.generateAuth(req, this.config.client_token, this.config.client_secret, this.config.access_token, this.config.host);
+  this.request = auth.generateAuth(
+    req,
+    this.config.client_token,
+    this.config.client_secret,
+    this.config.access_token,
+    this.config.host
+  );
 };
 
 EdgeGrid.prototype.send = function(callback) {
@@ -70,18 +84,14 @@ EdgeGrid.prototype._handleRedirect = function(resp, callback) {
   this.send(callback);
 };
 
-EdgeGrid.prototype._setConfigFromObj = function(obj) {
-  if (!obj.path) {
-    if (process.env.EDGEGRID_ENV !== 'test') {
-      logger.error('No .edgerc path');
-    }
-
-    throw new Error('No edgerc path');
-  }
-
-  this.config = edgerc(obj.path, obj.section);
-};
-
+/**
+ * Creates a config object from a set of parameters.
+ * 
+ * @param {String} client_token    The client token
+ * @param {String} client_secret   The client secret
+ * @param {String} access_token    The access token
+ * @param {String} host            The host 
+ */
 EdgeGrid.prototype._setConfigFromStrings = function(client_token, client_secret, access_token, host) {
   if (!validatedArgs([client_token, client_secret, access_token, host])) {
     throw new Error('Insufficient Akamai credentials');
@@ -114,6 +124,12 @@ function validatedArgs(args) {
   return valid;
 }
 
+/**
+ * Creates a config     Object from the section of a defined .edgerc file.
+ *     
+ * @param {Object} obj  An Object containing a path and section property that
+ *                      define the .edgerc section to use to create the Object.
+ */
 EdgeGrid.prototype._setConfigFromObj = function(obj) {
   if (!obj.path) {
     if (process.env.EDGEGRID_ENV !== 'test') {
