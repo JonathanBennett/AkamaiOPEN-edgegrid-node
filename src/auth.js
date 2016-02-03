@@ -56,7 +56,7 @@ function makeURL(host, path, queryStringObj) {
 
 module.exports = {
   generateAuth: function(request, clientToken, clientSecret, accessToken, host, maxBody, guid, timestamp) {
-    maxBody = maxBody || 2048;
+    maxBody = maxBody || 131072;
     guid = guid || uuid.v4();
     timestamp = timestamp || helpers.createTimestamp();
 
