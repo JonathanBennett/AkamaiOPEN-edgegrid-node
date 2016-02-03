@@ -74,7 +74,7 @@ module.exports = {
         parsedUrl.protocol.replace(":", ""),
         parsedUrl.host,
         parsedUrl.path,
-        this.canonicalizeHeaders(request.dataToSign),
+        this.canonicalizeHeaders(request.headersToSign),
         this.contentHash(request, maxBody),
         authHeader
       ];
@@ -130,8 +130,6 @@ module.exports = {
     for (key in headers) {
       formattedHeaders.push(key.toLowerCase() + ':' + headers[key].trim().replace(/\s+/g, ' '));
     }
-
-    console.log("canonicalizeHeaders: ", formattedHeaders);
 
     return formattedHeaders.join('\t');
   },
