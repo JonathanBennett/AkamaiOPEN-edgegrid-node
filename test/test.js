@@ -3,6 +3,7 @@ var assert = require("assert");
 
 // Libraries
 var auth = require('../src/auth.js');
+var path = require('path');
 var fs = require('fs');
 
 var base_url = "https://akaa-baseurl-xxxxxxxxxxx-xxxxxxxxxxxxx.luna.akamaiapis.net/",
@@ -75,7 +76,7 @@ describe('Signature Generation', function() {
   describe('POST too large', function() {
     it('should return the expected string when the signing request is run.', function() {
       var expected_header = "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=Qevb0l2aILIipbL0DcTyjEQCfKdm8YthPULEJD3BOh8=";
-      var data = fs.readFileSync('test_body_data.txt');
+      var data = fs.readFileSync(path.resolve(__dirname, 'test_body_data.txt'));
 
       var request = {
         //"url": "https://akaa-kax6r2oleojomqr3-q2i5ed3v35xfwe3j.luna.akamaiapis.net/billing-usage/v1/contractusagedata/contract/C-6JGLXF/6/2014",
@@ -121,7 +122,7 @@ describe('Signature Generation', function() {
 
   describe('simple header signing with GET', function() {
     it('should return the expected string when the signing request is run.', function() {
-      var expected_header = "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=8F9AybcRw+PLxnvT+H0JRkjROrrUgsxJTnRXMzqvcwY=";
+      var expected_header = "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=YgMcMzBrimnBmp7wxzjirUsAcC0UK6MVPydEpjKVcHc=";
       var headers = {
         "X-Test1": "test-simple-header"
       };
@@ -132,13 +133,14 @@ describe('Signature Generation', function() {
         "headers": headers
       };
       test_auth = auth.generateAuth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
+      console.log("Test AUTH with GET: ", test_auth.headers.Authorization);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
 
   describe('headers containing spaces', function() {
     it('should return the expected string when the signing request is run.', function() {
-      var expected_header = "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=ucq2AbjCNtobHfCTuS38fdkl5UDdWHZhQX46fYR8CqI=";
+      var expected_header = "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=YgMcMzBrimnBmp7wxzjirUsAcC0UK6MVPydEpjKVcHc=";
       var headers = {
         "X-Test1": "\"     test-header-with-spaces     \""
       };
@@ -149,6 +151,7 @@ describe('Signature Generation', function() {
         "headers": headers
       };
       test_auth = auth.generateAuth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
+      console.log("Test AUTH with spaces: ", test_auth.headers.Authorization);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
@@ -158,7 +161,7 @@ describe('Signature Generation', function() {
       var headers = {
         "X-Test1": "     first-thing      second-thing"
       };
-      var expected_header = "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=WtnneL539UadAAOJwnsXvPqT4Kt6z7HMgBEwAFpt3+c=";
+      var expected_header = "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=YgMcMzBrimnBmp7wxzjirUsAcC0UK6MVPydEpjKVcHc=";
       var request = {
         //"url": "https://akaa-kax6r2oleojomqr3-q2i5ed3v35xfwe3j.luna.akamaiapis.net/billing-usage/v1/contractusagedata/contract/C-6JGLXF/6/2014",
         "path": "testapi/v1/t4",
@@ -166,6 +169,7 @@ describe('Signature Generation', function() {
         "headers": headers
       };
       test_auth = auth.generateAuth(request, client_token, client_secret, access_token, base_url, false, nonce, timestamp);
+      console.log("Test AUTH with leading interior spaces: ", test_auth.headers.Authorization);
       assert.equal(test_auth.headers.Authorization, expected_header);
     });
   });
