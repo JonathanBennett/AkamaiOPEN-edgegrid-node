@@ -91,12 +91,39 @@ eg.auth({
   console.log(data);
 });
 ```
-#### Headers and Body Data
+#### Headers
 
 Headers for the request must be supplied in an object as name : value pairs. You do not need to supply form-data headers or content lengths - that will cause authentication headers on the API.
 
+```javascript
+eg.auth({
+  path: 'billing-usage/v1/products',
+  method: 'POST',
+  headers: {
+    'Content-Type': "application/json"
+  }
+});
+```
+
+#### Body Data
+
 The request BODY can be provided as either an object or as a POST data formed string.
 
+
+```javascript
+// Object
+eg.auth({
+  path: "/ccu/v2/queues/default",
+  method: "POST",
+  body: {
+    action: "invalidate",
+    objects: [
+      "https://someurl.com/path"
+    ]
+  }
+});
+```
+  
 #### Query String Pameters
 
 Query string parameters must be supplied in an Object as name : value pairs and 
@@ -119,6 +146,58 @@ eg.auth({
 
 // Produces request url similar to:
 // http://hostaddress.luna.akamaiapis.net/diagnostic-tools/v1/dig?hostname=developer.akamai.com&queryType=A&location=location
+```
+
+#### Debug
+
+Edgegrid accepts a --debug flag which, when passed, will cause the script to
+output additional information about the reqest that can be useful in debugging.
+
+The debug option can be passed in as part of the Edgegrid instantiation object
+or as a command line argument. 
+
+```javascript
+// Set debug via Edgegrid property
+var eg = new EdgeGrid({
+  path: edgercPath,
+  section: sectionName,
+  debug: true
+});
+```
+
+```bash
+// Set debug via commmand line argument
+$ node src/diagnostic-tools.js --debug
+
+Preparedbody:  {}
+REQUEST { path: '/diagnostic-tools/v1/locations',
+  method: 'GET',
+  headers: { Authorization: 'EG1-HMAC-SHA256 client_token=akab-zxhviyo3itu3dh4g-xubwmuzfq6veetfo;access_token=akab-km6yeorfbbmc6g2e-lz22p4nksvah5vhk;timestamp=20160204T16:28:47+0000;nonce=d617f5c5-19ac-4141-a35c-9e397daa0e2f;signature=gFDfbpLVPQ7swJblVgCOLcgDZ6K86MchOTXoTpmptkk=' },
+  body: '{}',
+  url: 'https://akab-onuzphpk5jotmfmj-couz3cnikiderksx.luna.akamaiapis.net/diagnostic-tools/v1/locations',
+  followRedirect: false,
+  callback: [Function: bound ] }
+REQUEST make request https://akab-onuzphpk5jotmfmj-couz3cnikiderksx.luna.akamaiapis.net/diagnostic-tools/v1/locations
+REQUEST onRequestResponse https://akab-onuzphpk5jotmfmj-couz3cnikiderksx.luna.akamaiapis.net/diagnostic-tools/v1/locations 200 { server: 'Apache-Coyote/1.1',
+  'x-ratelimit-limit': '180',
+  'x-ratelimit-remaining': '179',
+  'x-content-type-options': 'nosniff',
+  'content-type': 'application/json;charset=UTF-8',
+  'content-length': '1651',
+  date: 'Thu, 04 Feb 2016 16:28:48 GMT',
+  connection: 'close' }
+REQUEST finish init function https://akab-onuzphpk5jotmfmj-couz3cnikiderksx.luna.akamaiapis.net/diagnostic-tools/v1/locations
+REQUEST response end https://akab-onuzphpk5jotmfmj-couz3cnikiderksx.luna.akamaiapis.net/diagnostic-tools/v1/locations 200 { server: 'Apache-Coyote/1.1',
+  'x-ratelimit-limit': '180',
+  'x-ratelimit-remaining': '179',
+  'x-content-type-options': 'nosniff',
+  'content-type': 'application/json;charset=UTF-8',
+  'content-length': '1651',
+  date: 'Thu, 04 Feb 2016 16:28:48 GMT',
+  connection: 'close' }
+REQUEST end event https://akab-onuzphpk5jotmfmj-couz3cnikiderksx.luna.akamaiapis.net/diagnostic-tools/v1/locations
+REQUEST has body https://akab-onuzphpk5jotmfmj-couz3cnikiderksx.luna.akamaiapis.net/diagnostic-tools/v1/locations 1651
+REQUEST emitting complete https://akab-onuzphpk5jotmfmj-couz3cnikiderksx.luna.akamaiapis.net/diagnostic-tools/v1/locations
 ```
 
 ## Reporting a bug
