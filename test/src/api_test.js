@@ -143,6 +143,10 @@ describe('Api', function() {
   });
 
   describe('#auth', function() {
+    it('should be chainable', function(){
+      assert.deepEqual(this.api, this.api.auth({ path: '/foo' }));
+    });
+
     describe('when minimal request options are passed', function() {
       beforeEach(function() {
         this.api.auth({
@@ -207,6 +211,11 @@ describe('Api', function() {
   });
 
   describe('#send', function() {
+
+    it('should be chainable', function(){
+      assert.deepEqual(this.api, this.api.auth({ path: '/foo' }).send());
+    });
+
     describe('when authentication is done with a simple options object specifying only a path', function() {
       beforeEach(function() {
         nock('https://base.com')
