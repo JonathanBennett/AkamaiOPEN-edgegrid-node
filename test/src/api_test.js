@@ -281,5 +281,21 @@ describe('Api', function() {
         });
       });
     });
+    describe('when the initial request fails', function() {
+      it('correctly handles the error in the callback', function(done) {
+        nock('https://base.com')
+          .get('/foo')
+          .replyWithError('something awful happened');
+
+        this.api.auth({
+          path: '/foo',
+        });
+
+        this.api.send(function (data) {
+          assert.equal(data.message, 'something awful happened');
+          done();
+        });
+      });
+    });
   });
 });
