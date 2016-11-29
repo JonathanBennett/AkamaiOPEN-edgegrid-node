@@ -77,7 +77,7 @@ EdgeGrid.prototype.send = function(callback) {
       return;
     }
 
-    callback(body, response);
+    callback(null, response, body);
   }.bind(this));
 
   return this;

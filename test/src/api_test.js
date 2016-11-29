@@ -230,8 +230,8 @@ describe('Api', function() {
           path: '/foo'
         });
 
-        this.api.send(function(data) {
-          assert.equal(JSON.parse(data).foo, 'bar');
+        this.api.send(function(err, resp, body) {
+          assert.equal(JSON.parse(body).foo, 'bar');
           done();
         });
       });
@@ -252,8 +252,8 @@ describe('Api', function() {
           method: 'POST'
         });
 
-        this.api.send(function(data) {
-          assert.equal(JSON.parse(data).foo, 'bar');
+        this.api.send(function(err, resp, body) {
+          assert.equal(JSON.parse(body).foo, 'bar');
           done();
         });
       });
@@ -275,8 +275,8 @@ describe('Api', function() {
           path: '/foo',
         });
 
-        this.api.send(function(data) {
-          assert.equal(JSON.parse(data).bar, 'bim');
+        this.api.send(function(err, resp, body) {
+          assert.equal(JSON.parse(body).bar, 'bim');
           done();
         });
       });
