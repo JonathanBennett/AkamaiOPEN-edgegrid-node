@@ -40,8 +40,8 @@ eg.auth({
   body: data
 });
 
-eg.send(function(data, response) {
-  console.log(data);
+eg.send(function(error, response, body) {
+  console.log(body);
 });
 ```
 
@@ -87,8 +87,8 @@ eg.auth({
   method: 'POST',
   headers: {},
   body: data
-}).send(function (data, response) {
-  console.log(data);
+}).send(function (error, response, body) {
+  console.log(body);
 });
 ```
 #### Headers
@@ -140,8 +140,8 @@ eg.auth({
     "queryType": "A",
     "location": "Florida, United States"
   }}
-}).send(function (data, response) {
-  console.log(data);
+}).send(function (error, response, body) {
+  console.log(body);
 });
 
 // Produces request url similar to:
@@ -218,7 +218,7 @@ __NOTE__: If you'd like to contribute please feel free to create a fork and subm
 
 ## License
 
-Copyright 2015 Akamai Technologies, Inc. All rights reserved.
+Copyright 2016 Akamai Technologies, Inc. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
