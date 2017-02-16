@@ -19,7 +19,7 @@ var request = require('request'),
   helpers = require('./helpers'),
   logger = require('./logger');
 
-var EdgeGrid = function(client_token, client_secret, access_token, host, debug) {
+var EdgeGrid = function(client_token, client_secret, access_token, host, debug, retry) {
   // accepting an object containing a path to .edgerc and a config section
   if (typeof arguments[0] === 'object') {
     request.debug = arguments[0].debug ? true : false;
@@ -77,9 +77,16 @@ EdgeGrid.prototype.send = function(callback) {
       callback(error)
       return
     }
-    if (helpers.isRedirect(response.statusCode)) {
+
+    if (response.statusCode === 500 && this.retryCount < 4) {
+      this.retryCount += 1;
+      this.send(callback);
+      return;
+    } else if (helpers.isRedirect(response.statusCode)) {
       this._handleRedirect(response, callback);
       return;
+    } else {
+      this.retryCount = 0;
     }
 
     callback(body, response);
