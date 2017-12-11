@@ -21,11 +21,12 @@ var request = require('request'),
 
 var EdgeGrid = function(client_token, client_secret, access_token, host, debug) {
   // accepting an object containing a path to .edgerc and a config section
+  request.debug = process.env.EG_VERBOSE || false;
   if (typeof arguments[0] === 'object') {
-    request.debug = arguments[0].debug ? true : false;
+    request.debug = request.debug || arguments[0].debug ? true : false;
     this._setConfigFromObj(arguments[0]);
   } else {
-    request.debug = debug ? true : false;
+    request.debug = request.debug || debug ? true : false;
     this._setConfigFromStrings(client_token, client_secret, access_token, host);
   }
 };
@@ -68,6 +69,7 @@ EdgeGrid.prototype.auth = function(req) {
 
 EdgeGrid.prototype.send = function(callback) {
   request(this.request, function(error, response, body) { 
+    
     if (error) {
       callback(error);
       return;
