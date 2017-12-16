@@ -31,12 +31,27 @@ function getSection(lines, sectionName) {
 }
 
 function validatedConfig(config) {
+
+  if (!(config.host && config.access_token &&
+        config.client_secret && config.client_token)) {
+          var errorMessage = "";
+          var tokens = 
+            ['client_token', 'client_secret','access_token','host'];
+          tokens.forEach(function(token) {
+            if (!config[token]) {
+              errorMessage += "\nMissing: " + token;
+            }
+          })
+          console.log('Missing part of the configuration:\n' + errorMessage);
+          return {};
+        }
+
   if (config.host.indexOf('https://') > -1) {
     return config;
   }
 
   config.host = 'https://' + config.host;
-
+      
   return config;
 }
 
@@ -60,9 +75,36 @@ function buildObj(configs) {
   return validatedConfig(result);
 }
 
+function readEnv(section) {
+  // If any are set, we're committed
+  var envConf = {};
+  var envPrefix = "AKAMAI_" + section.toUpperCase()
+  var tokens = 
+    ['client_token', 'client_secret','access_token','host'];
+
+  tokens.forEach(function(token){
+    var envcheck = envPrefix + "_" + token.toUpperCase()
+    if (process.env[envcheck]) {
+      envConf[token] = process.env[envcheck];
+    }
+  })
+  
+  if (Object.keys(envConf).length > 0) {
+    console.log("Using configuration from environment variables")
+    return validatedConfig(envConf);
+  }
+  return {};
+}
+
 module.exports = function(path, conf) {
+  var confSection = conf || 'default'
+  var envConf = readEnv(confSection);
+  if (envConf['host']) {
+    return envConf;
+  }
+
   var edgerc = fs.readFileSync(path).toString().split('\n'),
-    confSection = conf || 'default',
+    confSection,
     confData = getSection(edgerc, confSection);
 
   if (!confData) {
