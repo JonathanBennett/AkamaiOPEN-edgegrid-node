@@ -104,7 +104,7 @@ module.exports = function(path, conf) {
     return envConf;
   }
 
-  if (!obj.path) {
+  if (!path) {
     if (process.env.EDGEGRID_ENV !== 'test') {
       logger.error('No .edgerc path');
     }
