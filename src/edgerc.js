@@ -61,7 +61,6 @@ function buildObj(configs) {
     key,
     val;
 
-console.log("MAYBE HERE")
   configs.forEach(function(config) {
     index = config.indexOf('=');
     key = config.substr(0, index);
