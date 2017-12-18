@@ -143,14 +143,6 @@ function validatedArgs(args) {
  *                      define the .edgerc section to use to create the Object.
  */
 EdgeGrid.prototype._setConfigFromObj = function(obj) {
-  if (!obj.path) {
-    if (process.env.EDGEGRID_ENV !== 'test') {
-      logger.error('No .edgerc path');
-    }
-
-    throw new Error('No edgerc path');
-  }
-
   this.config = edgerc(obj.path, obj.section);
 };
 

@@ -61,6 +61,7 @@ function buildObj(configs) {
     key,
     val;
 
+console.log("MAYBE HERE")
   configs.forEach(function(config) {
     index = config.indexOf('=');
     key = config.substr(0, index);
@@ -103,6 +104,13 @@ module.exports = function(path, conf) {
     return envConf;
   }
 
+  if (!obj.path) {
+    if (process.env.EDGEGRID_ENV !== 'test') {
+      logger.error('No .edgerc path');
+    }
+
+    throw new Error('No edgerc path');
+  }
   var edgerc = fs.readFileSync(path).toString().split('\n'),
     confSection,
     confData = getSection(edgerc, confSection);
