@@ -1,11 +1,12 @@
 [default]
 host = example.luna.akamaiapis.net
 client_token = clientToken
-client_secret = clientSecret
+client_secret = "client;Secret" ; there is a semi-colon in the client secret
 access_token = accessToken
 max-body = 131072
+; line comment
 
-[section]
+[section] ;this is a section
 host = sectionexample.luna.akamaiapis.net
 client_token = sectionClientToken
 client_secret = sectionClientSecret

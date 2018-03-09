@@ -93,7 +93,7 @@ describe('Api', function() {
         });
 
         it('reports the client secret from the edgerc associated with the default section', function() {
-          assert.equal(this.api.config.client_secret, 'clientSecret');
+          assert.equal(this.api.config.client_secret, 'client;Secret');
         });
 
         it('reports the access token from the edgerc associated with the default section', function() {
