@@ -67,17 +67,27 @@ function buildObj(configs) {
   var result = {},
     index,
     key,
-    val;
+    val,
+    isComment;
 
   configs.forEach(function(config) {
+    config = config.trim();
+    isComent = config.indexOf(";") === 0;
     index = config.indexOf('=');
-    key = config.substr(0, index);
-    val = config.substr(index + 1, config.length - index - 1);
+    if (index > -1 && !isComment) {
+      key = config.substr(0, index);
+      val = config.substring(index + 1);
+      // remove inline comments
+      if (val.search(/["']/)) {
+        val = val.replace(/\s*["'](.+)["']\s*;?.*$/, "$1");
+      } else {
+        val = val.replace(/\s*([^;]+)\s*;?.*$/, "$1");
+      }
+      // Remove trailing slash as if often found in the host property
+      val = val.replace(/\/$/, '');
 
-    // Remove trailing slash as if often found in the host property
-    val = val.replace(/\/$/, '');
-
-    result[key.trim()] = val.trim();
+      result[key.trim()] = val.trim();
+    }
   });
 
   return validatedConfig(result);
