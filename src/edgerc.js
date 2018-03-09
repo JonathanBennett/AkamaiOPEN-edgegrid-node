@@ -15,18 +15,26 @@
 var fs = require('fs');
 
 function getSection(lines, sectionName) {
-  var match = /\[(.*)\]/,
-    lineMatch,
-    section;
+  const match = /^\s*\[(.*)\]/;
+  let section;
 
-  lines.forEach(function(line, i) {
-    lineMatch = line.match(match);
+  lines.some(function(line, i) {
+    let lineMatch = line.match(match)
+    ,   isMatch = lineMatch !== null && lineMatch[1] === sectionName;
 
-    if (lineMatch && lineMatch[1] === sectionName) {
-      section = lines.slice(i + 1, i + 5);
+    if (isMatch) {
+      // go through section until we find a new one
+      section = [];
+      lines.slice(i + 1, lines.length).some(function(line) {
+        let isMatch = line.match(match) !== null;
+        if (!isMatch) {
+          section.push(line);
+        }
+        return isMatch;
+      });
     }
+    return isMatch;
   });
-
   return section;
 }
 
