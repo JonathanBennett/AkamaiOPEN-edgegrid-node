@@ -32,7 +32,7 @@ describe('edgerc', function() {
       });
 
       it('reports the default client_secret', function() {
-        assert.equal(this.config.client_secret, 'client;Secret');
+        assert.equal(this.config.client_secret, 'clientSecret');
       });
 
       it('reports the default access_token', function() {
