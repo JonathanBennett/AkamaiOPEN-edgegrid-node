@@ -28,5 +28,5 @@ client_token = "client token" ;comment
 client_secret = "client;secret" ; comment
 access_token = "access; token" ;comment
 max-body = 131072
-other = value
+other = 'The "most" \'interesting\' ; value in the \";world\"' ; comment
 ; comment

@@ -95,6 +95,10 @@ describe('edgerc', function() {
       it('parses a value with a semicolon properly', function() {
         assert.equal(this.config.client_secret, "client;secret");
       });
+
+      it('parses a complex value properly', function() {
+        assert.equal(this.config.other, 'The "most" \\\'interesting\\\' ; value in the \\";world\\"');
+      });
     })
   });
 });
