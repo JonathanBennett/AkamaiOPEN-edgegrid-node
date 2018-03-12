@@ -79,7 +79,7 @@ function buildObj(configs) {
       key = config.substr(0, index);
       val = config.substring(index + 1);
       // remove inline comments
-      parsedValue = val.replace(/^\s*(['"])((\\\1|.)*?)\1\s*;?.*$/, "$2");
+      parsedValue = val.replace(/^\s*(['"])((?:\\\1|.)*?)\1\s*(?:;.*)?$/, "$2");
       if (parsedValue === val) {
         // the value is not contained in matched quotation marks
         parsedValue = val.replace(/\s*([^;]+)\s*;?.*$/, "$1");
