@@ -68,6 +68,7 @@ function buildObj(configs) {
     index,
     key,
     val,
+    parsedValue,
     isComment;
 
   configs.forEach(function(config) {
@@ -78,15 +79,17 @@ function buildObj(configs) {
       key = config.substr(0, index);
       val = config.substring(index + 1);
       // remove inline comments
-      if (val.search(/["']/)) {
-        val = val.replace(/\s*["'](.+)["']\s*;?.*$/, "$1");
-      } else {
-        val = val.replace(/\s*([^;]+)\s*;?.*$/, "$1");
+      parsedValue = val.replace(/^\s*(['"])((\\\1|.)*?)\1\s*;?.*$/, "$2");
+      if (parsedValue === val) {
+        // the value is not contained in matched quotation marks
+        parsedValue = val.replace(/\s*([^;]+)\s*;?.*$/, "$1");
       }
       // Remove trailing slash as if often found in the host property
-      val = val.replace(/\/$/, '');
+      if (parsedValue.endsWith("/")) {
+        parsedValue = parsedValue.substr(0, parsedValue.length - 1);
+      }
 
-      result[key.trim()] = val.trim();
+      result[key.trim()] = parsedValue;
     }
   });
 
