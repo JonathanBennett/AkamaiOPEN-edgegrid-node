@@ -82,5 +82,23 @@ describe('edgerc', function() {
         );
       });
     });
+
+    describe('when the section has comments', function() {
+      beforeEach(function() {
+        this.config = edgerc(path.resolve(__dirname, '../test_edgerc'), 'comment-test');
+      });
+
+      it('has six configuration items', function() {
+        assert.equal(Object.keys(this.config).length, 6);
+      });
+
+      it('parses a value with a semicolon properly', function() {
+        assert.equal(this.config.client_secret, "client;secret");
+      });
+
+      it('parses a complex value properly', function() {
+        assert.equal(this.config.other, 'The "most" \\\'interesting\\\' ; value in the \\";world\\"');
+      });
+    })
   });
 });

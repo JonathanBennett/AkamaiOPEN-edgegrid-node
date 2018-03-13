@@ -15,18 +15,26 @@
 var fs = require('fs');
 
 function getSection(lines, sectionName) {
-  var match = /\[(.*)\]/,
-    lineMatch,
-    section;
+  var match = /^\s*\[(.*)\]/
+  ,   section;
 
-  lines.forEach(function(line, i) {
-    lineMatch = line.match(match);
+  lines.some(function(line, i) {
+    var lineMatch = line.match(match)
+    ,   isMatch = lineMatch !== null && lineMatch[1] === sectionName;
 
-    if (lineMatch && lineMatch[1] === sectionName) {
-      section = lines.slice(i + 1, i + 5);
+    if (isMatch) {
+      // go through section until we find a new one
+      section = [];
+      lines.slice(i + 1, lines.length).some(function(line) {
+        var isMatch = line.match(match) !== null;
+        if (!isMatch) {
+          section.push(line);
+        }
+        return isMatch;
+      });
     }
+    return isMatch;
   });
-
   return section;
 }
 
@@ -59,17 +67,30 @@ function buildObj(configs) {
   var result = {},
     index,
     key,
-    val;
+    val,
+    parsedValue,
+    isComment;
 
   configs.forEach(function(config) {
+    config = config.trim();
+    isComent = config.indexOf(";") === 0;
     index = config.indexOf('=');
-    key = config.substr(0, index);
-    val = config.substr(index + 1, config.length - index - 1);
+    if (index > -1 && !isComment) {
+      key = config.substr(0, index);
+      val = config.substring(index + 1);
+      // remove inline comments
+      parsedValue = val.replace(/^\s*(['"])((?:\\\1|.)*?)\1\s*(?:;.*)?$/, "$2");
+      if (parsedValue === val) {
+        // the value is not contained in matched quotation marks
+        parsedValue = val.replace(/\s*([^;]+)\s*;?.*$/, "$1");
+      }
+      // Remove trailing slash as if often found in the host property
+      if (parsedValue.endsWith("/")) {
+        parsedValue = parsedValue.substr(0, parsedValue.length - 1);
+      }
 
-    // Remove trailing slash as if often found in the host property
-    val = val.replace(/\/$/, '');
-
-    result[key.trim()] = val.trim();
+      result[key.trim()] = parsedValue;
+    }
   });
 
   return validatedConfig(result);
