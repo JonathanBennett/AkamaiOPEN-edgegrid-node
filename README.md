@@ -68,9 +68,9 @@ max-body = 131072
 In addition supplying credentials via an .edgerc file as above, you may also authenticate manually by hard-coding your credential values and passing them to the EdgeGrid client:
 
 ```javascript
-var clientToken = "akab-access-token-xxx-xxxxxxxxxxxxxxxx",
-    clientSecret = "akab-client-token-xxx-xxxxxxxxxxxxxxxx",
-    accessToken = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=",
+var clientToken = "akab-client-token-xxx-xxxxxxxxxxxxxxxx",
+    clientSecret = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=",
+    accessToken = "akab-access-token-xxx-xxxxxxxxxxxxxxxx",
     baseUri = "https://akaa-baseurl-xxxxxxxxxxx-xxxxxxxxxxxxx.luna.akamaiapis.net/";
 
 var eg = new EdgeGrid(clientToken, clientSecret, accessToken, baseUri);
