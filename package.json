@@ -25,12 +25,12 @@
   "license": "Apache-2.0",
   "dependencies": {
     "log4js": "^0.6.14",
-    "moment": "^2.7.0",
-    "request": "2.88.0",
+    "moment": "^2.22.2",
+    "request": "^2.88.0",
     "uuid": "^3.0.0"
   },
   "devDependencies": {
-    "mocha": "2.2.5",
-    "nock": "2.7.0"
+    "mocha": "^5.2.0",
+    "nock": "^10.0.1"
   }
 }
