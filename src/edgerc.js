@@ -12,7 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-var fs = require('fs');
+var fs = require('fs'),
+  logger = require('./logger');
 
 function getSection(lines, sectionName) {
   var match = /^\s*\[(.*)\]/
