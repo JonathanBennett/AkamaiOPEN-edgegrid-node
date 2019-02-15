@@ -43,10 +43,10 @@ EdgeGrid.prototype.auth = function(req) {
   let headers = {
     'Content-Type': "application/json"
   }
-  if(process.env['AKAMAI_CLI'] && process.env['AKAMAI_CLI_VERSION']) {
+  if (process.env['AKAMAI_CLI'] && process.env['AKAMAI_CLI_VERSION']) {
     headers['User-Agent'] = ( headers['User-Agent'] ? headers['User-Agent'] : "" ) + ` AkamaiCLI/${ process.env['AKAMAI_CLI_VERSION']}`;
   }
-  if ( process.env['AKAMAI_CLI_COMMAND'] && process.env['AKAMAI_CLI_COMMAND_VERSION']) { 
+  if (process.env['AKAMAI_CLI_COMMAND'] && process.env['AKAMAI_CLI_COMMAND_VERSION']) { 
     headers['User-Agent'] = ( headers['User-Agent'] ? headers['User-Agent'] : "" ) + ` AkamaiCLI-${ process.env['AKAMAI_CLI_COMMAND'] }/${ process.env['AKAMAI_CLI_COMMAND_VERSION'] }`;
   }
   req = helpers.extend(req, {
