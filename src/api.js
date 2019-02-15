@@ -40,12 +40,19 @@ var EdgeGrid = function(client_token, client_secret, access_token, host, debug) 
  *                      provided by specific APIs.
  */
 EdgeGrid.prototype.auth = function(req) {
+  let headers = {
+    'Content-Type': "application/json"
+  }
+  if(process.env['AKAMAI_CLI'] && process.env['AKAMAI_CLI_VERSION']) {
+    headers['User-Agent'] = ( headers['User-Agent'] ? headers['User-Agent'] : "" ) + ` AkamaiCLI/${ process.env['AKAMAI_CLI_VERSION']}`;
+  }
+  if ( process.env['AKAMAI_CLI_COMMAND'] && process.env['AKAMAI_CLI_COMMAND_VERSION']) { 
+    headers['User-Agent'] = ( headers['User-Agent'] ? headers['User-Agent'] : "" ) + ` AkamaiCLI-${ process.env['AKAMAI_CLI_COMMAND'] }/${ process.env['AKAMAI_CLI_COMMAND_VERSION'] }`;
+  }
   req = helpers.extend(req, {
     url: this.config.host + req.path,
     method: 'GET',
-    headers: {
-      'Content-Type': "application/json"
-    },
+    headers: headers,
     followRedirect: false,
     body: ''
   });
