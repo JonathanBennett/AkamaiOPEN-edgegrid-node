@@ -24,9 +24,11 @@ module.exports = {
 
   contentHash: function(request, maxBody) {
     var contentHash = '',
-      preparedBody = request.body || '';
+      preparedBody = request.body || '',
+      isTarball = preparedBody instanceof Uint8Array && request.headers['Content-Type'] === 'application/gzip';
 
-    if (typeof preparedBody === 'object') {
+
+    if (typeof preparedBody === 'object' && !isTarball) {
       var postDataNew = '',
         key;
 
