@@ -17,7 +17,8 @@ var request = require('request'),
   auth = require('./auth'),
   edgerc = require('./edgerc'),
   helpers = require('./helpers'),
-  logger = require('./logger');
+  logger = require('./logger'),
+  stream = require('stream');
 
 var EdgeGrid = function(client_token, client_secret, access_token, host, debug) {
   // accepting an object containing a path to .edgerc and a config section
@@ -57,12 +58,10 @@ EdgeGrid.prototype.auth = function(req) {
     body: ''
   });
 
-  let isTarball = req.body instanceof Uint8Array && req.headers['Content-Type'] === 'application/gzip';
-
   // Convert body object to properly formatted string
   if (req.body) {
-    if (typeof(req.body) == 'object' && !isTarball) {
-      req.body = JSON.stringify(req.body);
+    if (typeof(req.body) == 'object') {
+      req.body = req.body instanceof stream.Stream ? req.body : JSON.stringify(req.body);
     }
   }
 
