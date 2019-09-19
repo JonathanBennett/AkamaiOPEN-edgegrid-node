@@ -24,9 +24,10 @@ module.exports = {
 
   contentHash: function(request, maxBody) {
     var contentHash = '',
-      preparedBody = request.body || '';
-
-    if (typeof preparedBody === 'object') {
+      preparedBody = request.body || '',
+      isTarball = preparedBody instanceof Uint8Array && request.headers['Content-Type'] === 'application/gzip';
+      
+    if (typeof preparedBody === 'object' && !isTarball) {
       var postDataNew = '',
         key;
 
@@ -47,21 +48,27 @@ module.exports = {
     logger.debug('PREPARED BODY LENGTH', preparedBody.length);
     
     if (request.method === 'POST' && preparedBody.length > 0) {
-      logger.info('Signing content: \"' + preparedBody + '\"');
-
-      // If body data is too large, cut down to max-body size
-      if (preparedBody.length > maxBody) {
-        logger.warn('Data length (' + preparedBody.length + ') is larger than maximum ' + maxBody);
-        preparedBody = preparedBody.substring(0, maxBody);
-        logger.info('Body truncated. New value \"' + preparedBody + '\"');
+      
+      if (isTarball) {
+        preparedBody = preparedBody.toString().length > maxBody ? preparedBody.toString().substring(0, maxBody) : preparedBody.toString();
       }
+      else {
+        logger.info('Signing content: \"' + preparedBody + '\"');
 
+        // If body data is too large, cut down to max-body size
+        if (preparedBody.length > maxBody) {
+          logger.warn('Data length (' + preparedBody.length + ') is larger than maximum ' + maxBody);
+          preparedBody = preparedBody.substring(0, maxBody);
+          logger.info('Body truncated. New value \"' + preparedBody + '\"');
+        }
+      }
+      
       logger.debug('PREPARED BODY', preparedBody);
 
       contentHash = this.base64Sha256(preparedBody);
       logger.info('Content hash is \"' + contentHash + '\"');
     }
-
+    
     return contentHash;
   },
 

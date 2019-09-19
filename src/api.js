@@ -57,9 +57,11 @@ EdgeGrid.prototype.auth = function(req) {
     body: ''
   });
 
+  let isTarball = req.body instanceof Uint8Array && req.headers['Content-Type'] === 'application/gzip';
+
   // Convert body object to properly formatted string
   if (req.body) {
-    if (typeof(req.body) == 'object') {
+    if (typeof(req.body) == 'object' && !isTarball) {
       req.body = JSON.stringify(req.body);
     }
   }
