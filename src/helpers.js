@@ -18,15 +18,15 @@ var crypto = require('crypto'),
   logger = require('./logger');
 
 module.exports = {
-  createTimestamp: function() {
+  createTimestamp: function () {
     return moment().utc().format('YYYYMMDDTHH:mm:ss+0000');
   },
 
-  contentHash: function(request, maxBody) {
+  contentHash: function (request, maxBody) {
     var contentHash = '',
       preparedBody = request.body || '',
       isTarball = preparedBody instanceof Uint8Array && request.headers['Content-Type'] === 'application/gzip';
-      
+
     if (typeof preparedBody === 'object' && !isTarball) {
       var postDataNew = '',
         key;
@@ -46,33 +46,28 @@ module.exports = {
 
     logger.info('Body is \"' + preparedBody + '\"');
     logger.debug('PREPARED BODY LENGTH', preparedBody.length);
-    
-    if (request.method === 'POST' && preparedBody.length > 0) {
-      
-      if (isTarball) {
-        preparedBody = preparedBody.toString().length > maxBody ? preparedBody.toString().substring(0, maxBody) : preparedBody.toString();
-      }
-      else {
-        logger.info('Signing content: \"' + preparedBody + '\"');
 
-        // If body data is too large, cut down to max-body size
-        if (preparedBody.length > maxBody) {
-          logger.warn('Data length (' + preparedBody.length + ') is larger than maximum ' + maxBody);
-          preparedBody = preparedBody.substring(0, maxBody);
-          logger.info('Body truncated. New value \"' + preparedBody + '\"');
-        }
+    if (request.method === 'POST' && preparedBody.length > 0) {
+
+      logger.info('Signing content: \"' + preparedBody + '\"');
+
+      // If body data is too large, cut down to max-body size
+      if (preparedBody.length > maxBody) {
+        logger.warn('Data length (' + preparedBody.length + ') is larger than maximum ' + maxBody);
+        preparedBody = preparedBody.substring(0, maxBody);
+        logger.info('Body truncated. New value \"' + preparedBody + '\"');
       }
-      
+
       logger.debug('PREPARED BODY', preparedBody);
 
       contentHash = this.base64Sha256(preparedBody);
       logger.info('Content hash is \"' + contentHash + '\"');
     }
-    
+
     return contentHash;
   },
 
-  dataToSign: function(request, authHeader, maxBody) {
+  dataToSign: function (request, authHeader, maxBody) {
     var parsedUrl = url.parse(request.url, true),
       dataToSign = [
         request.method.toUpperCase(),
@@ -91,7 +86,7 @@ module.exports = {
     return dataToSign;
   },
 
-  extend: function(a, b) {
+  extend: function (a, b) {
     var key;
 
     for (key in b) {
@@ -103,19 +98,19 @@ module.exports = {
     return a;
   },
 
-  isRedirect: function(statusCode) {
+  isRedirect: function (statusCode) {
     return [
       300, 301, 302, 303, 307
     ].indexOf(statusCode) !== -1;
   },
 
-  base64Sha256: function(data) {
+  base64Sha256: function (data) {
     var shasum = crypto.createHash('sha256').update(data);
 
     return shasum.digest('base64');
   },
 
-  base64HmacSha256: function(data, key) {
+  base64HmacSha256: function (data, key) {
     var encrypt = crypto.createHmac('sha256', key);
 
     encrypt.update(data);
@@ -128,7 +123,7 @@ module.exports = {
    * @param  {Object} headers Object containing the headers to add to the set.
    * @return {String}         String containing a tab delimited set of headers.
    */
-  canonicalizeHeaders: function(headers) {
+  canonicalizeHeaders: function (headers) {
     var formattedHeaders = [],
       key;
 
@@ -139,7 +134,7 @@ module.exports = {
     return formattedHeaders.join('\t');
   },
 
-  signingKey: function(timestamp, clientSecret) {
+  signingKey: function (timestamp, clientSecret) {
     var key = this.base64HmacSha256(timestamp, clientSecret);
 
     logger.info('Signing key: ' + key + '\n');
@@ -147,7 +142,7 @@ module.exports = {
     return key;
   },
 
-  signRequest: function(request, timestamp, clientSecret, authHeader, maxBody) {
+  signRequest: function (request, timestamp, clientSecret, authHeader, maxBody) {
     return this.base64HmacSha256(this.dataToSign(request, authHeader, maxBody), this.signingKey(timestamp, clientSecret));
   }
 };
