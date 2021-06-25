@@ -12,23 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-var request = require('request'),
-  url = require('url'),
-  auth = require('./auth'),
-  edgerc = require('./edgerc'),
-  helpers = require('./helpers'),
-  logger = require('./logger');
+require("axios-debug-log");
 
-var EdgeGrid = function(client_token, client_secret, access_token, host, debug) {
-  // accepting an object containing a path to .edgerc and a config section
-  request.debug = process.env.EG_VERBOSE || false;
-  if (typeof arguments[0] === 'object') {
-    request.debug = request.debug || arguments[0].debug ? true : false;
-    this._setConfigFromObj(arguments[0]);
-  } else {
-    request.debug = request.debug || debug ? true : false;
-    this._setConfigFromStrings(client_token, client_secret, access_token, host);
-  }
+const axios = require('axios'),
+    url = require('url'),
+    auth = require('./auth'),
+    edgerc = require('./edgerc'),
+    helpers = require('./helpers'),
+    logger = require('./logger');
+
+var EdgeGrid = function (client_token, client_secret, access_token, host, debug) {
+    // accepting an object containing a path to .edgerc and a config section
+    // request.debug = process.env.EG_VERBOSE || false;
+    if (typeof arguments[0] === 'object') {
+        // request.debug = request.debug || arguments[0].debug ? true : false;
+        this._setConfigFromObj(arguments[0]);
+    } else {
+        // request.debug = request.debug || debug ? true : false;
+        this._setConfigFromStrings(client_token, client_secret, access_token, host);
+    }
 };
 
 /**
@@ -39,70 +41,70 @@ var EdgeGrid = function(client_token, client_secret, access_token, host, debug) 
  *                      that will be included in the signature. This will be
  *                      provided by specific APIs.
  */
-EdgeGrid.prototype.auth = function(req) {
-  let headers = {
-    'Content-Type': "application/json"
-  }
-  if (process.env['AKAMAI_CLI'] && process.env['AKAMAI_CLI_VERSION']) {
-    headers['User-Agent'] = ( headers['User-Agent'] ? headers['User-Agent'] + " " : "" ) + `AkamaiCLI/${ process.env['AKAMAI_CLI_VERSION']}`;
-  }
-  if (process.env['AKAMAI_CLI_COMMAND'] && process.env['AKAMAI_CLI_COMMAND_VERSION']) { 
-    headers['User-Agent'] = ( headers['User-Agent'] ? headers['User-Agent'] + " " : "" ) + `AkamaiCLI-${ process.env['AKAMAI_CLI_COMMAND'] }/${ process.env['AKAMAI_CLI_COMMAND_VERSION'] }`;
-  }
-  req = helpers.extend(req, {
-    url: this.config.host + req.path,
-    method: 'GET',
-    headers: headers,
-    followRedirect: false,
-    body: ''
-  });
-
-  let isTarball = req.body instanceof Uint8Array && req.headers['Content-Type'] === 'application/gzip';
-
-  // Convert body object to properly formatted string
-  if (req.body) {
-    if (typeof(req.body) == 'object' && !isTarball) {
-      req.body = JSON.stringify(req.body);
+EdgeGrid.prototype.auth = function (req) {
+    console.log("auth");
+    let headers = {
+        'Content-Type': "application/json"
     }
-  }
+    if (process.env['AKAMAI_CLI'] && process.env['AKAMAI_CLI_VERSION']) {
+        headers['User-Agent'] = (headers['User-Agent'] ? headers['User-Agent'] + " " : "") + `AkamaiCLI/${process.env['AKAMAI_CLI_VERSION']}`;
+    }
+    if (process.env['AKAMAI_CLI_COMMAND'] && process.env['AKAMAI_CLI_COMMAND_VERSION']) {
+        headers['User-Agent'] = (headers['User-Agent'] ? headers['User-Agent'] + " " : "") + `AkamaiCLI-${process.env['AKAMAI_CLI_COMMAND']}/${process.env['AKAMAI_CLI_COMMAND_VERSION']}`;
+    }
+    req = helpers.extend(req, {
+        baseURL: this.config.host,
+        url: req.path,
+        method: 'GET',
+        headers: headers,
+        maxRedirect: 0,
+        body: ''
+    });
 
-  this.request = auth.generateAuth(
-    req,
-    this.config.client_token,
-    this.config.client_secret,
-    this.config.access_token,
-    this.config.host
-  );
-  return this;
+    let isTarball = req.body instanceof Uint8Array && req.headers['Content-Type'] === 'application/gzip';
+
+    // Convert body object to properly formatted string
+    if (req.body) {
+        if (typeof (req.body) == 'object' && !isTarball) {
+            req.body = JSON.stringify(req.body);
+        }
+    }
+    req.data = req.body;
+
+    this.request = auth.generateAuth(
+        req,
+        this.config.client_token,
+        this.config.client_secret,
+        this.config.access_token,
+        this.config.host
+    );
+    return this;
 };
 
-EdgeGrid.prototype.send = function(callback) {
-  request(this.request, function(error, response, body) { 
-    
-    if (error) {
-      callback(error);
-      return;
-    }
-    if (helpers.isRedirect(response.statusCode)) {
-      this._handleRedirect(response, callback);
-      return;
-    }
+EdgeGrid.prototype.send = function (callback) {
+    console.log("send");
+    axios(this.request).then(function (response) {
+        if (helpers.isRedirect(response.status)) {
+            this._handleRedirect(response, callback);
+            return;
+        }
+        callback(null, response, JSON.stringify(response.data));
+    }).catch(function (error) {
+        callback(error);
+    });
 
-    callback(null, response, body);
-  }.bind(this));
-
-  return this;
+    return this;
 };
 
-EdgeGrid.prototype._handleRedirect = function(resp, callback) {
-  var parsedUrl = url.parse(resp.headers['location']);
+EdgeGrid.prototype._handleRedirect = function (resp, callback) {
+    var parsedUrl = url.parse(resp.headers['location']);
 
-  resp.headers['authorization'] = undefined;
-  this.request.url = undefined;
-  this.request.path = parsedUrl.path;
+    resp.headers['authorization'] = undefined;
+    this.request.url = undefined;
+    this.request.path = parsedUrl.path;
 
-  this.auth(this.request);
-  this.send(callback);
+    this.auth(this.request);
+    this.send(callback);
 };
 
 /**
@@ -113,36 +115,36 @@ EdgeGrid.prototype._handleRedirect = function(resp, callback) {
  * @param {String} access_token    The access token
  * @param {String} host            The host
  */
-EdgeGrid.prototype._setConfigFromStrings = function(client_token, client_secret, access_token, host) {
-  if (!validatedArgs([client_token, client_secret, access_token, host])) {
-    throw new Error('Insufficient Akamai credentials');
-  }
+EdgeGrid.prototype._setConfigFromStrings = function (client_token, client_secret, access_token, host) {
+    if (!validatedArgs([client_token, client_secret, access_token, host])) {
+        throw new Error('Insufficient Akamai credentials');
+    }
 
-  this.config = {
-    client_token: client_token,
-    client_secret: client_secret,
-    access_token: access_token,
-    host: host.indexOf('https://') > -1 ? host : 'https://' + host
-  };
+    this.config = {
+        client_token: client_token,
+        client_secret: client_secret,
+        access_token: access_token,
+        host: host.indexOf('https://') > -1 ? host : 'https://' + host
+    };
 };
 
 function validatedArgs(args) {
-  var expected = [
-      'client_token', 'client_secret', 'access_token', 'host'
-    ],
-    valid = true;
+    var expected = [
+            'client_token', 'client_secret', 'access_token', 'host'
+        ],
+        valid = true;
 
-  expected.forEach(function(arg, i) {
-    if (!args[i]) {
-      if (process.env.EDGEGRID_ENV !== 'test') {
-        logger.error('No defined ' + arg);
-      }
+    expected.forEach(function (arg, i) {
+        if (!args[i]) {
+            if (process.env.EDGEGRID_ENV !== 'test') {
+                logger.error('No defined ' + arg);
+            }
 
-      valid = false;
-    }
-  });
+            valid = false;
+        }
+    });
 
-  return valid;
+    return valid;
 }
 
 /**
@@ -151,8 +153,8 @@ function validatedArgs(args) {
  * @param {Object} obj  An Object containing a path and section property that
  *                      define the .edgerc section to use to create the Object.
  */
-EdgeGrid.prototype._setConfigFromObj = function(obj) {
-  this.config = edgerc(obj.path, obj.section);
+EdgeGrid.prototype._setConfigFromObj = function (obj) {
+    this.config = edgerc(obj.path, obj.section);
 };
 
 module.exports = EdgeGrid;
