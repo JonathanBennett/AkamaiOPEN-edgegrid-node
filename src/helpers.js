@@ -54,7 +54,10 @@ module.exports = {
       // If body data is too large, cut down to max-body size
       if (preparedBody.length > maxBody) {
         logger.warn('Data length (' + preparedBody.length + ') is larger than maximum ' + maxBody);
-        preparedBody = preparedBody.substring(0, maxBody);
+        if (isTarball)
+          preparedBody = preparedBody.slice(0, maxBody);
+        else
+          preparedBody = preparedBody.substring(0, maxBody);
         logger.info('Body truncated. New value \"' + preparedBody + '\"');
       }
 
