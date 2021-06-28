@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-require("axios-debug-log");
-
 const axios = require('axios'),
     url = require('url'),
     auth = require('./auth'),
@@ -23,13 +21,20 @@ const axios = require('axios'),
 
 var EdgeGrid = function (client_token, client_secret, access_token, host, debug) {
     // accepting an object containing a path to .edgerc and a config section
-    // request.debug = process.env.EG_VERBOSE || false;
     if (typeof arguments[0] === 'object') {
-        // request.debug = request.debug || arguments[0].debug ? true : false;
         this._setConfigFromObj(arguments[0]);
     } else {
-        // request.debug = request.debug || debug ? true : false;
         this._setConfigFromStrings(client_token, client_secret, access_token, host);
+    }
+    if (process.env.EG_VERBOSE || debug || (typeof arguments[0] === 'object' && arguments[0].debug)) {
+        axios.interceptors.request.use(request => {
+            console.log('Starting Request', request);
+            return request;
+        });
+        axios.interceptors.response.use(response => {
+            console.log('Response:', response);
+            return response;
+        });
     }
 };
 
@@ -42,7 +47,6 @@ var EdgeGrid = function (client_token, client_secret, access_token, host, debug)
  *                      provided by specific APIs.
  */
 EdgeGrid.prototype.auth = function (req) {
-    console.log("auth");
     let headers = {
         'Content-Type': "application/json"
     }
@@ -69,6 +73,7 @@ EdgeGrid.prototype.auth = function (req) {
             req.body = JSON.stringify(req.body);
         }
     }
+    // this assignment is done in order to assert backwards compatibility of this library - a `body` field is accepted in this library, whereas axios expects the request body to be in `data` field
     req.data = req.body;
 
     this.request = auth.generateAuth(
@@ -82,7 +87,6 @@ EdgeGrid.prototype.auth = function (req) {
 };
 
 EdgeGrid.prototype.send = function (callback) {
-    console.log("send");
     axios(this.request).then(function (response) {
         if (helpers.isRedirect(response.status)) {
             this._handleRedirect(response, callback);
