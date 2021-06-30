@@ -13,13 +13,12 @@
 // limitations under the License.
 
 const axios = require('axios'),
-    url = require('url'),
     auth = require('./auth'),
     edgerc = require('./edgerc'),
     helpers = require('./helpers'),
     logger = require('./logger');
 
-var EdgeGrid = function (client_token, client_secret, access_token, host, debug) {
+const EdgeGrid = function (client_token, client_secret, access_token, host, debug) {
     // accepting an object containing a path to .edgerc and a config section
     if (typeof arguments[0] === 'object') {
         this._setConfigFromObj(arguments[0]);
@@ -45,11 +44,12 @@ var EdgeGrid = function (client_token, client_secret, access_token, host, debug)
  *                      'headersToSign' property: An ordered list header names
  *                      that will be included in the signature. This will be
  *                      provided by specific APIs.
+ * @return EdgeGrid object (self)
  */
 EdgeGrid.prototype.auth = function (req) {
     let headers = {
         'Content-Type': "application/json"
-    }
+    };
     if (process.env['AKAMAI_CLI'] && process.env['AKAMAI_CLI_VERSION']) {
         headers['User-Agent'] = (headers['User-Agent'] ? headers['User-Agent'] + " " : "") + `AkamaiCLI/${process.env['AKAMAI_CLI_VERSION']}`;
     }
@@ -101,11 +101,11 @@ EdgeGrid.prototype.send = function (callback) {
 };
 
 EdgeGrid.prototype._handleRedirect = function (resp, callback) {
-    var parsedUrl = url.parse(resp.headers['location']);
+    const parsedUrl = new URL(resp.headers['location']);
 
     resp.headers['authorization'] = undefined;
     this.request.url = undefined;
-    this.request.path = parsedUrl.path;
+    this.request.path = parsedUrl.pathname + parsedUrl.search;
 
     this.auth(this.request);
     this.send(callback);
@@ -133,10 +133,10 @@ EdgeGrid.prototype._setConfigFromStrings = function (client_token, client_secret
 };
 
 function validatedArgs(args) {
-    var expected = [
-            'client_token', 'client_secret', 'access_token', 'host'
-        ],
-        valid = true;
+    const expected = [
+        'client_token', 'client_secret', 'access_token', 'host'
+    ];
+    let valid = true;
 
     expected.forEach(function (arg, i) {
         if (!args[i]) {

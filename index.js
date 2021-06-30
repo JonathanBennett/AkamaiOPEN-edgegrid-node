@@ -1,2 +1,2 @@
-var EdgeGrid = require('./src/api.js');
+const EdgeGrid = require('./src/api.js');
 module.exports = EdgeGrid;
