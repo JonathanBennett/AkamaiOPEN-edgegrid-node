@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-var log4js = require('log4js'),
+const log4js = require('log4js'),
     logger = log4js.getLogger();
 
 if (!process.env.LOG4JS_CONFIG) {
