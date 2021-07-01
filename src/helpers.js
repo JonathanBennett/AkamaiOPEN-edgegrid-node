@@ -14,7 +14,9 @@
 
 const crypto = require('crypto'),
     moment = require('moment'),
-    logger = require('./logger');
+    logger = require('./logger'),
+    path = require('path'),
+    os = require('os');
 
 module.exports = {
     createTimestamp: function () {
@@ -143,5 +145,12 @@ module.exports = {
 
     signRequest: function (request, timestamp, clientSecret, authHeader, maxBody) {
         return this.base64HmacSha256(this.dataToSign(request, authHeader, maxBody), this.signingKey(timestamp, clientSecret));
+    },
+
+    resolveHome: function (filePath) {
+        if (filePath[0] === '~') {
+            return path.join(os.homedir(), filePath.slice(1));
+        }
+        return filePath;
     }
 };
