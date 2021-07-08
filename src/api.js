@@ -21,7 +21,9 @@ const axios = require('axios'),
 const EdgeGrid = function (client_token, client_secret, access_token, host, debug) {
     // accepting an object containing a path to .edgerc and a config section
     if (typeof arguments[0] === 'object') {
-        this._setConfigFromObj(arguments[0]);
+        let edgercPath = arguments[0];
+        edgercPath.path = helpers.resolveHome(arguments[0].path);
+        this._setConfigFromObj(edgercPath);
     } else {
         this._setConfigFromStrings(client_token, client_secret, access_token, host);
     }
