@@ -22,6 +22,7 @@ const EdgeGrid = function (client_token, client_secret, access_token, host, debu
     // accepting an object containing a path to .edgerc and a config section
     if (typeof arguments[0] === 'object') {
         let edgercPath = arguments[0];
+        helpers.validatePathExists(arguments[0]);
         edgercPath.path = helpers.resolveHome(arguments[0].path);
         this._setConfigFromObj(edgercPath);
     } else {
@@ -63,7 +64,7 @@ EdgeGrid.prototype.auth = function (req) {
         url: req.path,
         method: 'GET',
         headers: headers,
-        maxRedirect: 0,
+        maxRedirects: 0,
         body: ''
     });
 
@@ -89,13 +90,14 @@ EdgeGrid.prototype.auth = function (req) {
 };
 
 EdgeGrid.prototype.send = function (callback) {
-    axios(this.request).then(function (response) {
-        if (helpers.isRedirect(response.status)) {
-            this._handleRedirect(response, callback);
+    axios(this.request).then(response => {
+        callback(null, response, JSON.stringify(response.data));
+    }).catch(error => {
+        // handling redirects has to be handled in catch (with maxRedirects set to 0) because axios does not allow modifying headers between redirects
+        if (error.response && helpers.isRedirect(error.response.status)) {
+            this._handleRedirect(error.response, callback);
             return;
         }
-        callback(null, response, JSON.stringify(response.data));
-    }).catch(function (error) {
         callback(error);
     });
 

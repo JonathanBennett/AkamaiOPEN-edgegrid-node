@@ -124,4 +124,18 @@ describe('helpers', function () {
             assert.strictEqual(helpers.resolveHome('some/path/testdir'), "some/path/testdir");
         });
     });
+
+    describe('#validatePathExists', function () {
+        it('does not throw error', function () {
+            assert.doesNotThrow(function() {
+                return helpers.validatePathExists({path: "some path"});
+            });
+        });
+
+        it('throws error', function () {
+            assert.throws(function() {
+                return helpers.validatePathExists({});
+            });
+        });
+    });
 });

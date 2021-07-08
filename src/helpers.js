@@ -155,5 +155,15 @@ module.exports = {
             return path.join(os.homedir(), filePath.slice(1));
         }
         return filePath;
+    },
+
+    validatePathExists: function (config) {
+        if (!config.path) {
+            if (process.env.EDGEGRID_ENV !== 'test') {
+                logger.error("No path to '.edgerc'");
+            }
+
+            throw new Error("No path to '.edgerc'");
+        }
     }
 };

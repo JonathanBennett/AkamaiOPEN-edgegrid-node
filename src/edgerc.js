@@ -124,13 +124,6 @@ module.exports = function (path, conf) {
         return envConf;
     }
 
-    if (!path) {
-        if (process.env.EDGEGRID_ENV !== 'test') {
-            logger.error('No .edgerc path');
-        }
-
-        throw new Error('No edgerc path');
-    }
     const edgerc = fs.readFileSync(path).toString().split('\n'),
         confData = getSection(edgerc, confSection);
 

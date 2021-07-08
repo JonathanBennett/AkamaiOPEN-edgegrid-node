@@ -261,14 +261,24 @@ describe('Api', function () {
 
         describe('when the initial request redirects', function () {
             it('correctly follows the redirect and re-signs the request', function (done) {
+                let authHeader;
                 nock('https://base.com')
                     .get('/foo')
-                    .reply(302, undefined, {
-                        'Location': 'https://base.com/bar'
+                    .reply(function() {
+                        authHeader = this.req.headers["authorization"];
+                        return [
+                            302,
+                            '',
+                            {'location': 'https://base.com/bar'}
+                        ];
                     })
                     .get('/bar')
-                    .reply(200, {
-                        bar: 'bim'
+                    .reply(function() {
+                        assert.notStrictEqual(this.req.headers["authorization"], authHeader);
+                        return [
+                           200,
+                            {someKey: 'value'}
+                        ];
                     });
 
                 this.api.auth({
@@ -276,7 +286,7 @@ describe('Api', function () {
                 });
 
                 this.api.send(function (err, resp, body) {
-                    assert.strictEqual(JSON.parse(body).bar, 'bim');
+                    assert.strictEqual(JSON.parse(body).someKey, 'value');
                     done();
                 });
             });
