@@ -22,8 +22,6 @@ const EdgeGrid = function (client_token, client_secret, access_token, host, debu
     // accepting an object containing a path to .edgerc and a config section
     if (typeof arguments[0] === 'object') {
         let edgercPath = arguments[0];
-        helpers.validatePathExists(arguments[0]);
-        edgercPath.path = helpers.resolveHome(arguments[0].path);
         this._setConfigFromObj(edgercPath);
     } else {
         this._setConfigFromStrings(client_token, client_secret, access_token, host);
@@ -144,10 +142,7 @@ function validatedArgs(args) {
 
     expected.forEach(function (arg, i) {
         if (!args[i]) {
-            if (process.env.EDGEGRID_ENV !== 'test') {
-                logger.error('No defined ' + arg);
-            }
-
+            logger.error('No defined ' + arg);
             valid = false;
         }
     });

@@ -19,4 +19,8 @@ if (!process.env.LOG4JS_CONFIG) {
   logger.setLevel(log4js.levels.ERROR);
 }
 
+if (process.env.EDGEGRID_ENV === 'test') {
+  logger.level = log4js.levels.OFF;
+}
+
 module.exports = logger;

@@ -27,6 +27,14 @@ describe('Api', function () {
         );
     });
 
+    // clear env variables which might be set in tests
+    beforeEach(function () {
+        process.env['AKAMAI_HOST'] = '';
+        process.env['AKAMAI_CLIENT_TOKEN'] = '';
+        process.env['AKAMAI_CLIENT_SECRET'] = '';
+        process.env['AKAMAI_ACCESS_TOKEN'] = '';
+    });
+
     describe('.config', function () {
         it('reports the client token', function () {
             assert.strictEqual(this.api.config.client_token, 'clientToken');
@@ -106,13 +114,18 @@ describe('Api', function () {
             });
 
             describe('when it is instantiated with an object that does not specify a path nor a section', function () {
-                it('throws the appropriate error', function () {
-                    assert.throws(
-                        function () {
-                            return new Api({});
-                        },
-                        /No edgerc path/
-                    );
+                beforeEach(function () {
+                    process.env['AKAMAI_HOST'] = 'https://example.luna.akamaiapis.net';
+                    process.env['AKAMAI_CLIENT_TOKEN'] = 'clientToken';
+                    process.env['AKAMAI_CLIENT_SECRET'] = 'clientSecret';
+                    process.env['AKAMAI_ACCESS_TOKEN'] = 'accessToken';
+                    this.api = new Api({});
+                });
+                it('uses config from env variables with default section', function () {
+                    assert.strictEqual(this.api.config.host, "https://example.luna.akamaiapis.net");
+                    assert.strictEqual(this.api.config.client_token, "clientToken");
+                    assert.strictEqual(this.api.config.client_secret, "clientSecret");
+                    assert.strictEqual(this.api.config.access_token, "accessToken");
                 });
             });
 
@@ -124,7 +137,7 @@ describe('Api', function () {
                                 path: ''
                             });
                         },
-                        /No edgerc path/
+                        /Either path to '.edgerc' or environment variables with edgerc configuration has to be provided./
                     );
                 });
             });
@@ -264,7 +277,7 @@ describe('Api', function () {
                 let authHeader;
                 nock('https://base.com')
                     .get('/foo')
-                    .reply(function() {
+                    .reply(function () {
                         authHeader = this.req.headers["authorization"];
                         return [
                             302,
@@ -273,10 +286,10 @@ describe('Api', function () {
                         ];
                     })
                     .get('/bar')
-                    .reply(function() {
+                    .reply(function () {
                         assert.notStrictEqual(this.req.headers["authorization"], authHeader);
                         return [
-                           200,
+                            200,
                             {someKey: 'value'}
                         ];
                     });

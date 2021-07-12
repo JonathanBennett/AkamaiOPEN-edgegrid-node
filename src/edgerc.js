@@ -13,7 +13,8 @@
 // limitations under the License.
 
 const fs = require('fs'),
-    logger = require('./logger');
+    logger = require('./logger'),
+    helpers = require('./helpers');
 
 function getSection(lines, sectionName) {
     const match = /^\s*\[(.*)]/,
@@ -97,24 +98,24 @@ function buildObj(configs) {
 }
 
 function readEnv(section) {
-    // If any are set, we're committed
-    const envConf = {},
-        envPrefix = "AKAMAI_" + section.toUpperCase(),
-        tokens =
-            ['client_token', 'client_secret', 'access_token', 'host'];
+    const requiredKeys = ["HOST", "ACCESS_TOKEN", "CLIENT_TOKEN", "CLIENT_SECRET"],
+        prefix = !section || section === "default" ? "AKAMAI_" : "AKAMAI_" + section.toUpperCase() + "_",
+        envConfig = {};
 
-    tokens.forEach(function (token) {
-        const envcheck = envPrefix + "_" + token.toUpperCase();
-        if (process.env[envcheck]) {
-            envConf[token] = process.env[envcheck];
+
+    for (const key of requiredKeys) {
+        const varName = prefix + key;
+        if (!process.env[varName]) {
+            logger.debug("Environment variable not set: " + varName);
+            continue;
         }
-    });
-
-    if (Object.keys(envConf).length > 0) {
-        console.log("Using configuration from environment variables");
-        return validatedConfig(envConf);
+        envConfig[key.toLowerCase()] = process.env[prefix + key];
     }
-    return {};
+    if (Object.keys(envConfig).length < requiredKeys.length) {
+        return {};
+    }
+    console.log("Using configuration from environment variables");
+    return validatedConfig(envConfig);
 }
 
 module.exports = function (path, conf) {
@@ -123,7 +124,10 @@ module.exports = function (path, conf) {
     if (envConf['host']) {
         return envConf;
     }
-
+    if (!path) {
+        throw new Error("Either path to '.edgerc' or environment variables with edgerc configuration has to be provided.");
+    }
+    path = helpers.resolveHome(path);
     const edgerc = fs.readFileSync(path).toString().split('\n'),
         confData = getSection(edgerc, confSection);
 

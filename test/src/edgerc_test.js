@@ -17,6 +17,12 @@ const assert = require('assert'),
     edgerc = require('../../src/edgerc');
 
 describe('edgerc', function () {
+    beforeEach(function () {
+        process.env['AKAMAI_HOST'] = '';
+        process.env['AKAMAI_CLIENT_TOKEN'] = '';
+        process.env['AKAMAI_CLIENT_SECRET'] = '';
+        process.env['AKAMAI_ACCESS_TOKEN'] = '';
+    });
     describe('the parsed edgrc file it returns', function () {
         describe('when it is not passed a second argument indicating config section', function () {
             beforeEach(function () {
@@ -98,6 +104,50 @@ describe('edgerc', function () {
 
             it('parses a complex value properly', function () {
                 assert.strictEqual(this.config.other, 'The "most" \\\'interesting\\\' ; value in the \\";world\\"');
+            });
+        });
+
+        describe('when the envs are used with default section', function () {
+            beforeEach(function () {
+                process.env['AKAMAI_HOST'] = 'https://example.luna.akamaiapis.net';
+                process.env['AKAMAI_CLIENT_TOKEN'] = 'clientToken';
+                process.env['AKAMAI_CLIENT_SECRET'] = 'clientSecret';
+                process.env['AKAMAI_ACCESS_TOKEN'] = 'accessToken';
+                this.config = edgerc();
+            });
+
+            it('has four configuration items', function () {
+                assert.strictEqual(Object.keys(this.config).length, 4);
+            });
+
+            it('has valid config values', function () {
+                assert.strictEqual(this.config.host, "https://example.luna.akamaiapis.net");
+                assert.strictEqual(this.config.client_token, "clientToken");
+                assert.strictEqual(this.config.client_secret, "clientSecret");
+                assert.strictEqual(this.config.access_token, "accessToken");
+            });
+        });
+
+        describe('when the envs are used with custom section', function () {
+            beforeEach(function () {
+                process.env['AKAMAI_SOME_SECTION_HOST'] = 'https://example.luna.akamaiapis.net';
+                process.env['AKAMAI_SOME_SECTION_CLIENT_TOKEN'] = 'clientToken';
+                process.env['AKAMAI_SOME_SECTION_CLIENT_SECRET'] = 'clientSecret';
+                process.env['AKAMAI_SOME_SECTION_ACCESS_TOKEN'] = 'accessToken';
+                this.config = edgerc(undefined, 'some_section');
+            });
+            afterEach(function () {
+                process.env['AKAMAI_SOME_SECTION_HOST'] = '';
+                process.env['AKAMAI_SOME_SECTION_CLIENT_TOKEN'] = '';
+                process.env['AKAMAI_SOME_SECTION_CLIENT_SECRET'] = '';
+                process.env['AKAMAI_SOME_SECTION_ACCESS_TOKEN'] = '';
+            });
+
+            it('has valid config values', function () {
+                assert.strictEqual(this.config.host, "https://example.luna.akamaiapis.net");
+                assert.strictEqual(this.config.client_token, "clientToken");
+                assert.strictEqual(this.config.client_secret, "clientSecret");
+                assert.strictEqual(this.config.access_token, "accessToken");
             });
         });
     });
