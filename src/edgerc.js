@@ -12,133 +12,128 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-var fs = require('fs'),
-  logger = require('./logger');
+const fs = require('fs'),
+    logger = require('./logger'),
+    helpers = require('./helpers');
 
 function getSection(lines, sectionName) {
-  var match = /^\s*\[(.*)\]/
-  ,   section;
+    const match = /^\s*\[(.*)]/,
+        section = [];
 
-  lines.some(function(line, i) {
-    var lineMatch = line.match(match)
-    ,   isMatch = lineMatch !== null && lineMatch[1] === sectionName;
+    lines.some(function (line, i) {
+        const lineMatch = line.match(match),
+            isMatch = lineMatch !== null && lineMatch[1] === sectionName;
 
-    if (isMatch) {
-      // go through section until we find a new one
-      section = [];
-      lines.slice(i + 1, lines.length).some(function(line) {
-        var isMatch = line.match(match) !== null;
-        if (!isMatch) {
-          section.push(line);
+        if (isMatch) {
+            // go through section until we find a new one
+            lines.slice(i + 1, lines.length).some(function (line) {
+                const isMatch = line.match(match) !== null;
+                if (!isMatch) {
+                    section.push(line);
+                }
+                return isMatch;
+            });
         }
         return isMatch;
-      });
-    }
-    return isMatch;
-  });
-  return section;
+    });
+    return section;
 }
 
 function validatedConfig(config) {
 
-  if (!(config.host && config.access_token &&
+    if (!(config.host && config.access_token &&
         config.client_secret && config.client_token)) {
-          var errorMessage = "";
-          var tokens = 
-            ['client_token', 'client_secret','access_token','host'];
-          tokens.forEach(function(token) {
+        let errorMessage = "";
+        const tokens =
+            ['client_token', 'client_secret', 'access_token', 'host'];
+        tokens.forEach(function (token) {
             if (!config[token]) {
-              errorMessage += "\nMissing: " + token;
+                errorMessage += "\nMissing: " + token;
             }
-          })
-          console.log('Missing part of the configuration:\n' + errorMessage);
-          return {};
-        }
+        });
+        console.log('Missing part of the configuration:\n' + errorMessage);
+        return {};
+    }
 
-  if (config.host.indexOf('https://') > -1) {
+    if (config.host.indexOf('https://') > -1) {
+        return config;
+    }
+
+    config.host = 'https://' + config.host;
+
     return config;
-  }
-
-  config.host = 'https://' + config.host;
-      
-  return config;
 }
 
 function buildObj(configs) {
-  var result = {},
-    index,
-    key,
-    val,
-    parsedValue,
-    isComment;
+    const result = {};
+    let index,
+        key,
+        val,
+        parsedValue,
+        isComment;
 
-  configs.forEach(function(config) {
-    config = config.trim();
-    isComent = config.indexOf(";") === 0;
-    index = config.indexOf('=');
-    if (index > -1 && !isComment) {
-      key = config.substr(0, index);
-      val = config.substring(index + 1);
-      // remove inline comments
-      parsedValue = val.replace(/^\s*(['"])((?:\\\1|.)*?)\1\s*(?:;.*)?$/, "$2");
-      if (parsedValue === val) {
-        // the value is not contained in matched quotation marks
-        parsedValue = val.replace(/\s*([^;]+)\s*;?.*$/, "$1");
-      }
-      // Remove trailing slash as if often found in the host property
-      if (parsedValue.endsWith("/")) {
-        parsedValue = parsedValue.substr(0, parsedValue.length - 1);
-      }
+    configs.forEach(function (config) {
+        config = config.trim();
+        isComment = config.indexOf(";") === 0;
+        index = config.indexOf('=');
+        if (index > -1 && !isComment) {
+            key = config.substr(0, index);
+            val = config.substring(index + 1);
+            // remove inline comments
+            parsedValue = val.replace(/^\s*(['"])((?:\\\1|.)*?)\1\s*(?:;.*)?$/, "$2");
+            if (parsedValue === val) {
+                // the value is not contained in matched quotation marks
+                parsedValue = val.replace(/\s*([^;]+)\s*;?.*$/, "$1");
+            }
+            // Remove trailing slash as if often found in the host property
+            if (parsedValue.endsWith("/")) {
+                parsedValue = parsedValue.substr(0, parsedValue.length - 1);
+            }
 
-      result[key.trim()] = parsedValue;
-    }
-  });
+            result[key.trim()] = parsedValue;
+        }
+    });
 
-  return validatedConfig(result);
+    return validatedConfig(result);
 }
 
 function readEnv(section) {
-  // If any are set, we're committed
-  var envConf = {};
-  var envPrefix = "AKAMAI_" + section.toUpperCase()
-  var tokens = 
-    ['client_token', 'client_secret','access_token','host'];
+    const requiredKeys = ["HOST", "ACCESS_TOKEN", "CLIENT_TOKEN", "CLIENT_SECRET"],
+        prefix = !section || section === "default" ? "AKAMAI_" : "AKAMAI_" + section.toUpperCase() + "_",
+        envConfig = {};
 
-  tokens.forEach(function(token){
-    var envcheck = envPrefix + "_" + token.toUpperCase()
-    if (process.env[envcheck]) {
-      envConf[token] = process.env[envcheck];
+
+    for (const key of requiredKeys) {
+        const varName = prefix + key;
+        if (!process.env[varName]) {
+            logger.debug("Environment variable not set: " + varName);
+            continue;
+        }
+        envConfig[key.toLowerCase()] = process.env[prefix + key];
     }
-  })
-  
-  if (Object.keys(envConf).length > 0) {
-    console.log("Using configuration from environment variables")
-    return validatedConfig(envConf);
-  }
-  return {};
+    if (Object.keys(envConfig).length < requiredKeys.length) {
+        return {};
+    }
+    console.log("Using configuration from environment variables");
+    return validatedConfig(envConfig);
 }
 
-module.exports = function(path, conf) {
-  var confSection = conf || 'default'
-  var envConf = readEnv(confSection);
-  if (envConf['host']) {
-    return envConf;
-  }
+module.exports = function (path, conf) {
+    const confSection = conf || 'default',
+        envConf = readEnv(confSection);
+    if (envConf['host']) {
+        return envConf;
+    }
+    if (!path) {
+        throw new Error("Either path to '.edgerc' or environment variables with edgerc configuration has to be provided.");
+    }
+    path = helpers.resolveHome(path);
+    const edgerc = fs.readFileSync(path).toString().split('\n'),
+        confData = getSection(edgerc, confSection);
 
-  if (!path) {
-    if (process.env.EDGEGRID_ENV !== 'test') {
-      logger.error('No .edgerc path');
+    if (!confData.length) {
+        throw new Error('An error occurred parsing the .edgerc file. You probably specified an invalid section name.');
     }
 
-    throw new Error('No edgerc path');
-  }
-  var edgerc = fs.readFileSync(path).toString().split('\n'),
-    confSection,
-    confData = getSection(edgerc, confSection);
-
-  if (!confData) {
-    throw new Error('An error occurred parsing the .edgerc file. You probably specified an invalid section name.');
-  }
-
-  return buildObj(confData);
+    return buildObj(confData);
 };

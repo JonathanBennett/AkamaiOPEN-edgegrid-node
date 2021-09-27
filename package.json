@@ -1,6 +1,6 @@
 {
   "name": "edgegrid",
-  "version": "3.0.8",
+  "version": "3.1.0",
   "description": "Authentication handler for the Akamai OPEN EdgeGrid Authentication scheme in Node.js",
   "main": "index.js",
   "scripts": {
@@ -24,13 +24,13 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
+    "axios": "^0.21.1",
     "log4js": "^0.6.14",
     "moment": "^2.22.2",
-    "request": "^2.88.0",
     "uuid": "^3.0.0"
   },
   "devDependencies": {
-    "mocha": "^5.2.0",
+    "mocha": "^9.0.1",
     "nock": "^10.0.1"
   }
 }

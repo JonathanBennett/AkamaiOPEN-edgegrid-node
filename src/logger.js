@@ -12,11 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-var log4js = require('log4js'),
+const log4js = require('log4js'),
     logger = log4js.getLogger();
 
 if (!process.env.LOG4JS_CONFIG) {
   logger.setLevel(log4js.levels.ERROR);
+}
+
+if (process.env.EDGEGRID_ENV === 'test') {
+  logger.level = log4js.levels.OFF;
 }
 
 module.exports = logger;

@@ -140,7 +140,7 @@ eg.auth({
     "queryType": "A",
     "location": "Florida, United States"
   }}
-}).send(function (error, response, body) {
+).send(function (error, response, body) {
   console.log(body);
 });
 
