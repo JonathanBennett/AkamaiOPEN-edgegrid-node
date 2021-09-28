@@ -1,5 +1,10 @@
 # RELEASE NOTES
 
+## 3.1.1 (Sep 28, 2021)
+
+#### BUG FIXES:
+* Update version of axios to 0.21.4 to get rid of ReDoS vulnerability
+
 ## 3.1.0 (Sep 27, 2021)
 
 #### BUG FIXES:
