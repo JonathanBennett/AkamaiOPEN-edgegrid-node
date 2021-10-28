@@ -2,26 +2,31 @@
 
 [![Build Status](https://travis-ci.org/akamai/AkamaiOPEN-edgegrid-node.svg?branch=master)](https://travis-ci.org/akamai/AkamaiOPEN-edgegrid-node)
 
-This library implements an Authentication handler for the [Akamai OPEN](hhttps://developer.akamai.com/introduction/) EdgeGrid Authentication scheme in Node.js For more infomation visit the [Akamai {OPEN} Developer Portal](https://developer.akamai.com/).
+This library implements an Authentication handler for the Akamai EdgeGrid Authentication scheme in Node.js. 
+
+It’s Akamai’s current and officially supported version of AkamaiOPEN EdgeGrid for Node.js. 
+You can find the most up-to-date package in [NPM](https://www.npmjs.com/package/akamai-edgegrid) under `akamai-edgegrid`.
+
+> __IMPORTANT:__ Akamai will not maintain the `edgegrid` package in NPM going forward.
 
 ## Installation
 
-`npm install --save edgegrid`
+`npm install --save akamai-edgegrid`
 
 ## Example
 
-#### Credentials
+### Credentials
 
-To use the Akamai OPEN APIs you must first register and authorize a set of credentials through the [LUNA Control Center](https://control.akamai.com/homeng/view/main). More information on creating and authorizing credentials can be found at [https://developer.akamai.com/introduction/Prov_Creds.html](https://developer.akamai.com/introduction/Prov_Creds.html)
+To use Akamai APIs you must first register and authorize a set of credentials through [Control Center](https://control.akamai.com). You can find more information on creating and authorizing credentials at [Authenticate with EdgeGrid](https://developer.akamai.com/getting-started/edgegrid).
 
-#### .edgerc Authentication
+### .edgerc authentication
 
-The preferred method of using the library involves providing the path to an '.edgerc' file which contains the authenticaion credentials which will be used to sign your requests.
+The preferred method of using the library involves providing the path to an `.edgerc` file. This file contains the authentication credentials used to sign your requests.
 
-__NOTE__: Requests to the API are signed with a timestamp and therefore should be executed immediately.
+> __NOTE__: Requests to the API are signed with a timestamp and are executed immediately.
 
 ```javascript
-var EdgeGrid = require('edgegrid');
+var EdgeGrid = require('akamai-edgegrid');
 
 var data = 'bodyData';
 
@@ -45,7 +50,7 @@ eg.send(function(error, response, body) {
 });
 ```
 
-An `.edgerc` file contains sections of credentials and is usually hosted in your home directory:
+An `.edgerc` file contains sections for each of your API client credentials and is usually hosted in your home directory:
 
 ```plaintext
 [default]
@@ -63,9 +68,9 @@ access_token = akab-XXXXXXXXXXXXXXXX-XXXXXXXXXXXXXXXX
 max-body = 131072
 ```
 
-#### Manual Authentication
+### Manual authentication
 
-In addition supplying credentials via an .edgerc file as above, you may also authenticate manually by hard-coding your credential values and passing them to the EdgeGrid client:
+You can also authenticate manually by hard coding your credential values and passing them to the EdgeGrid client:
 
 ```javascript
 var clientToken = "akab-client-token-xxx-xxxxxxxxxxxxxxxx",
@@ -76,88 +81,82 @@ var clientToken = "akab-client-token-xxx-xxxxxxxxxxxxxxxx",
 var eg = new EdgeGrid(clientToken, clientSecret, accessToken, baseUri);
 ```
 
-#### Chaining
+### Chaining
 
-Calls using the edgegrid client can also be chained as per the following;
+You can also chain calls using the `akamai-edgegrid` like in this example:
 
 ```javascript
 ...
 eg.auth({
-  path: 'billing-usage/v1/products',
-  method: 'POST',
+  path: '/papi/v1/groups',
+  method: 'GET',
   headers: {},
-  body: data
 }).send(function (error, response, body) {
   console.log(body);
 });
 ```
-#### Headers
+### Headers
 
-Headers for the request must be supplied in an object as name : value pairs. You do not need to supply form-data headers or content lengths - that will cause authentication headers on the API.
+Headers for the request must be supplied in an object as name-value pairs. You do not need to supply form-data headers or content lengths - that will cause authentication headers on the API.
 
 ```javascript
 eg.auth({
-  path: 'billing-usage/v1/products',
-  method: 'POST',
+  path: '/papi/v1/groups',
+  method: 'GET',
   headers: {
-    'Content-Type': "application/json"
+    'Accept': "application/json"
   }
 });
 ```
 
-#### Body Data
+### Body data
 
-The request BODY can be provided as either an object or as a POST data formed string.
+The request `body` can be provided as either an object or as a POST data formed string.
 
 
 ```javascript
 // Object
 eg.auth({
-  path: "/ccu/v2/queues/default",
-  method: "POST",
-  body: {
-    action: "invalidate",
-    objects: [
-      "https://someurl.com/path"
-    ]
-  }
+    path: '/papi/v1/cpcodes?contractId=ctr_1234&groupId=grp_1234',
+    method: 'POST',
+    body: {
+        cpcodeName: "test-cpcode",
+        productId: "prd_Site_Accel"
+    }
 });
 ```
   
-#### Query String Pameters
+### Query string parameters
 
-Query string parameters must be supplied in an Object as name : value pairs and 
+Query string parameters must be supplied in an object as name-value pairs and 
 passed to the `auth` method under the `qs` property.
 
 ```javascript
 eg.auth({
-  path: 'billing-usage/v1/dig',
-  method: 'GET',
-  headers: {},
-  body: {},
-  qs: {
-    "hostname": "developer.akamai.com.",
-    "queryType": "A",
-    "location": "Florida, United States"
-  }}
-).send(function (error, response, body) {
-  console.log(body);
-});
+    path: '/papi/v1/cpcodes',
+    method: 'POST',
+    headers: {},
+    qs: {
+        contractId: "ctr_1234",
+        groupId: "grp_1234",
+    },
+    body: data
+})
 
-// Produces request url similar to:
-// http://hostaddress.luna.akamaiapis.net/diagnostic-tools/v1/dig?hostname=developer.akamai.com&queryType=A&location=location
+// Produces request URL similar to:
+// https://akaa-baseurl-xxxxxxxxxxx-xxxxxxxxxxxxx.luna.akamaiapis.net/papi/v1/cpcodes?contractId=ctr_1234&groupId=grp_1234
 ```
 
-#### Debug
+### Debug
 
-Edgegrid accepts a --debug flag which, when passed, will cause the script to
-output additional information about the reqest that can be useful in debugging.
+With EdgeGrid you can enable debugging either as part of the EdgeGrid instantiation object
+or by setting the `EG_VERBOSE` environment variable. When enabled, EdgeGrid provides 
+additional information about the request that's helpful for debugging.
 
-The debug option can be passed in as part of the Edgegrid instantiation object
-or as a command line argument. 
+Here's an EdgeGrid example:
 
 ```javascript
-// Set debug via Edgegrid property
+// Set debug via EdgeGrid property
 var eg = new EdgeGrid({
   path: edgercPath,
   section: sectionName,
@@ -165,60 +164,38 @@ var eg = new EdgeGrid({
 });
 ```
 
-```bash
-// Set debug via commmand line argument
-$ node src/diagnostic-tools.js --debug
+And here's an example for a command-line argument:
 
-Preparedbody:  {}
-REQUEST { path: '/diagnostic-tools/v1/locations',
-  method: 'GET',
-  headers: { Authorization: 'EG1-HMAC-SHA256 client_token=akab-zxhviyo3itu3dh4g-xubwmuzfq6veetfo;access_token=akab-km6yeorfbbmc6g2e-lz22p4nksvah5vhk;timestamp=20160204T16:28:47+0000;nonce=d617f5c5-19ac-4141-a35c-9e397daa0e2f;signature=gFDfbpLVPQ7swJblVgCOLcgDZ6K86MchOTXoTpmptkk=' },
-  body: '{}',
-  url: 'https://akab-onuzphpk5jotmfmj-couz3cnikiderksx.luna.akamaiapis.net/diagnostic-tools/v1/locations',
-  followRedirect: false,
-  callback: [Function: bound ] }
-REQUEST make request https://akab-onuzphpk5jotmfmj-couz3cnikiderksx.luna.akamaiapis.net/diagnostic-tools/v1/locations
-REQUEST onRequestResponse https://akab-onuzphpk5jotmfmj-couz3cnikiderksx.luna.akamaiapis.net/diagnostic-tools/v1/locations 200 { server: 'Apache-Coyote/1.1',
-  'x-ratelimit-limit': '180',
-  'x-ratelimit-remaining': '179',
-  'x-content-type-options': 'nosniff',
-  'content-type': 'application/json;charset=UTF-8',
-  'content-length': '1651',
-  date: 'Thu, 04 Feb 2016 16:28:48 GMT',
-  connection: 'close' }
-REQUEST finish init function https://akab-onuzphpk5jotmfmj-couz3cnikiderksx.luna.akamaiapis.net/diagnostic-tools/v1/locations
-REQUEST response end https://akab-onuzphpk5jotmfmj-couz3cnikiderksx.luna.akamaiapis.net/diagnostic-tools/v1/locations 200 { server: 'Apache-Coyote/1.1',
-  'x-ratelimit-limit': '180',
-  'x-ratelimit-remaining': '179',
-  'x-content-type-options': 'nosniff',
-  'content-type': 'application/json;charset=UTF-8',
-  'content-length': '1651',
-  date: 'Thu, 04 Feb 2016 16:28:48 GMT',
-  connection: 'close' }
-REQUEST end event https://akab-onuzphpk5jotmfmj-couz3cnikiderksx.luna.akamaiapis.net/diagnostic-tools/v1/locations
-REQUEST has body https://akab-onuzphpk5jotmfmj-couz3cnikiderksx.luna.akamaiapis.net/diagnostic-tools/v1/locations 1651
-REQUEST emitting complete https://akab-onuzphpk5jotmfmj-couz3cnikiderksx.luna.akamaiapis.net/diagnostic-tools/v1/locations
+```bash
+// Set debug via environment variable
+$ export EG_VERBOSE=true
+$ node src/main.js
+
+Starting Request {
+  url: 'https://akaa-baseurl-xxxxxxxxxxx-xxxxxxxxxxxxx.luna.akamaiapis.net/papi/v1/groups',
+  method: 'get',
+  data: '',
+  headers: {
+    common: { Accept: 'application/json, text/plain, */*' },
+    delete: {},
+...
+Response: {
+  status: 200,
+  statusText: 'OK',
+  headers: {
+    server: 'nginx',
+    'content-type': 'application/json;charset=UTF-8',
+...
+}
 ```
 
-## Reporting a bug
+## Reporting issues
 
-To report a bug simply create a new GitHub Issue and describe your problem or suggestion.
-
-Before reporting a bug look around to see if there are any open or closed tickets that cover your issue, and check the [Akamai OPEN Developer Community](https://community.akamai.com/community/developer) to see if there are any posts that might address your concern. And remember the wisdom: pull request > bug report > tweet!
-
-## Contributors
-
-A huge thanks to [Jonatahn Bennett](https://github.com/JonathanBennett) for creating and maintaining the original iteration of this project and to the following contributors:
-
-* [@dariusk](https://github.com/dariusk)
-* [@mdb](https://github.com/mdb)
-* [@ktyacke](https://github.com/ktyacke)
-
-__NOTE__: If you'd like to contribute please feel free to create a fork and submit a pull request.
+To report a problem or make a suggestion, create a new [GitHub issue](https://github.com/akamai/AkamaiOPEN-edgegrid-node/issues).
 
 ## License
 
-Copyright 2016 Akamai Technologies, Inc. All rights reserved.
+Copyright 2021 Akamai Technologies, Inc. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
