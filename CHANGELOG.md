@@ -1,5 +1,11 @@
 # RELEASE NOTES
 
+## 3.1.2 (Nov 3, 2021)
+
+#### NOTES:
+* [IMPORTANT] Change npm package name from `edgegrid` to `akamai-edgegrid`
+* Clean up README.md to include working examples and get rid of inconsistencies
+
 ## 3.1.1 (Sep 28, 2021)
 
 #### BUG FIXES:
